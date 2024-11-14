@@ -6,10 +6,10 @@ const DB_PASSWORD = process.env.DB_PASSWORD
 const DB_NAME     = process.env.DB_NAME
 
 const sequelize = new Sequelize({
-    host: "seeking-db.c9a2gk6agedx.ap-southeast-1.rds.amazonaws.com",
-    username: "root",
-    password: "Yeswecan123!!",
-    database: "seeking_db",
+    host: DB_HOST,
+    username: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_NAME,
     dialect: "mysql",
     dialectModule: require("mysql2"),
     benchmark: true
