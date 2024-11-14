@@ -1,0 +1,18 @@
+import React from 'react'
+import { Button } from '../ui/button'
+import { Eye } from 'lucide-react'
+
+const ViewButton = ({onClick, disabled, hidden}) => {
+  return (
+    <>
+      <Button 
+        onClick={onClick}
+        disabled={disabled}
+        className={`${hidden ? 'hidden':'flex'} ${disabled ? 'bg-gray-400':'bg-green-500'} m-1 justify-center rounded-md w-8 h-8 px-1 py-1 text-sm font-semibold text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300'}`}>
+        <Eye className='p-1' />
+        </Button>
+    </>
+  )
+}
+
+export default ViewButton
