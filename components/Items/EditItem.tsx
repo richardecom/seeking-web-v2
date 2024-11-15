@@ -199,7 +199,7 @@ const EditItem = ({itemData, onSubmit}) => {
 
   useEffect(() => {
     const fetchUserLocation = async () => {
-      if (searchKey) {
+      if (locationSearchKey) {
         try {
           const params = { page : 1, limit : 100, searchKey:locationSearchKey, user_id: formData.user_id }
           console.log(params)

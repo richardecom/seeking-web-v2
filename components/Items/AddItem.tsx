@@ -63,7 +63,7 @@ const AddItem = ({ onClose }) => {
     quantity: z
       .number({ message: "Invalid Quantity" })
       .int({ message: "Invalid Quantity" })
-      .min(1, { message: "Required*" })
+      .min(0, { message: "Required*" })
       .nonnegative(),
     rating: z.number().min(0.5, { message: "Required*" }),
   });
