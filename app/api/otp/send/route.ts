@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         /**update when existing data found */
         await Otp.update(payload, { where: { email } });
         if (type === 1) {
-          sendRegistrationEmail({ email_address: email, otp_code: otp })
+          await sendRegistrationEmail({ email_address: email, otp_code: otp })
             .then(() => {
               console.error("Registration Otp has been sent!");
             })

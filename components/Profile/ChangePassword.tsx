@@ -110,6 +110,11 @@ const ChangePassword = () => {
             description: result.message,
           });
           setFormData(initialData)
+          setTouchedFields({
+            current_password: false,
+            new_password: false,
+            confirm_password: false,
+          })
         } else if (result.status === 401) {
           router.push("/");
         }else{

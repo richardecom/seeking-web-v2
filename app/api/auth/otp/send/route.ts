@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
                             await Otp.create(payload);
                         }
                         
-                        sendForgotPassword({ user, otp_code: otp }).then(() => {
+                        await sendForgotPassword({ user, otp_code: otp }).then(() => {
                             console.error('Forgot Password Otp has been sent!');
                         }).catch((error) => {
                             console.error('Failed to send registration email:', error);
