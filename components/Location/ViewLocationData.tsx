@@ -91,10 +91,15 @@ const ViewLocationData = ({ locationData }) => {
         ))}
 
         <div className="flex py-2">
+          <a href={
+              locationData?.location_image_url
+                ? locationData?.location_image_url
+                : "/images/no_image_available.jpg"
+            } target="_blank" rel="noopener noreferrer">
           <Image
             width={100}
             height={100}
-            className="rounded-md"
+            className="rounded-md w-[100px] h-[100px]"
             src={
               locationData?.location_image_url
                 ? locationData?.location_image_url
@@ -102,16 +107,22 @@ const ViewLocationData = ({ locationData }) => {
             }
             alt="location_image_url"
           />
+          </a>
         </div>
 
         <div className="flex flex-row w-full py-1">
           <div className="w-full font-medium mt-3">User Details</div>
         </div>
         <div className="flex mb-2 w-[100px] h-[100px]">
+          <a href={
+              locationData?.user.image
+                ? locationData?.user.image
+                : "/images/no_image_available.jpg"
+            } target="_blank" rel="noopener noreferrer">
           <Image
             width={100}
             height={100}
-            className="rounded-md"
+            className="rounded-full"
             src={
               locationData?.user.image
                 ? locationData?.user.image
@@ -119,6 +130,7 @@ const ViewLocationData = ({ locationData }) => {
             }
             alt='User Photo'
           />
+          </a>
         </div>
         {userDataRows.map((row, index) => (
           <div key={index} className="flex flex-row w-full py-1">

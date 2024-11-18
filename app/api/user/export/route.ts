@@ -6,7 +6,7 @@ import { GetTokenData } from "@/app/helper/tokenHelper";
 
 export async function GET(req: NextRequest){
     
-    const getToken = GetTokenData(req)
+    const getToken = await GetTokenData(req)
         if (!getToken) {
             return NextResponse.json({
                 status: 401,
@@ -15,6 +15,7 @@ export async function GET(req: NextRequest){
         }
 
         console.log("getToken", getToken)
+        console.log("getToken", getToken.userID)
 
     try {
         const url = new URL(req.url);
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest){
             }
         }
         if (getToken) {
-            excludeIdsArray.push(getToken);
+            excludeIdsArray.push(getToken.userID);
             if (excludeIdsArray.length > 0) {
                 whereClause.user_id = { [Op.notIn]: excludeIdsArray };
             }

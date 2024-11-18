@@ -91,24 +91,26 @@ export async function GET(request:NextRequest) {
                         [literal(`COALESCE(items.image_url, '')`), 'image_url'],
                         [literal(`COALESCE(items.expiry_date, '')`), 'expiry_date'],
                         [literal(`DATE_FORMAT(items.date_created, '%Y-%m-%d')`), 'date_created'],
-                        [literal(`COALESCE(User.name, '')`), 'user_name'],
+                        [literal(`COALESCE(user.name, '')`), 'user_name'],
                         [literal(`CASE 
-                                WHEN User.user_type = 1 THEN 'Premium'
-                                WHEN User.user_type = 0 THEN 'Free'
+                                WHEN user.user_type = 1 THEN 'Premium'
+                                WHEN user.user_type = 0 THEN 'Free'
                                 ELSE 'Unknown'
                             END`),'user_type'
                         ],
-                        [literal(`COALESCE(Location.building, '')`), 'building'],
+                        [literal(`COALESCE(location.building, '')`), 'building'],
                     ],
                 },
                 include: [
                     { 
                         model: User ,
+                        as:'user',
                         attributes: [],
                         required: false
                     },
                     { 
                         model: Location ,
+                        as: 'location',
                         attributes: [],
                         required: false
                     },

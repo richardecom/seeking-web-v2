@@ -3,9 +3,8 @@ import React from "react";
 import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 const ViewItemData = ({ itemData }) => {
+  console.log("itemDatas", itemData);
 
-  console.log('itemDatas', itemData);
-  
   const dataRows = [
     { label: "ID:", value: itemData.item_id },
     { label: "Item Name:", value: itemData.item_name },
@@ -62,13 +61,20 @@ const ViewItemData = ({ itemData }) => {
           <div className="flex gap-3 mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-2">
             {itemData.item_images.map((item_image, index) => (
               <div className="flex  w-[100px] h-[100px]" key={index}>
-                <Image
-                  width={100}
-                  height={100}
-                  className="rounded-md"
-                  src={item_image.item_image_url}
-                  alt={`Image ${index + 1}`}
-                />
+                <a
+                  href={item_image.item_image_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Image
+                    width={100}
+                    height={100}
+                    className="rounded-md w-[100px] h-[100px]"
+                    src={item_image.item_image_url}
+                    alt={`Image ${index + 1}`}
+                  />
+                </a>
               </div>
             ))}
           </div>
@@ -96,31 +102,42 @@ const ViewItemData = ({ itemData }) => {
             <div className="w-[70%] text-sm ">{row.value}</div>
           </div>
         ))}
-        <div className="flex py-2 mb-2 w-[100px] h-[100px]">
-          <Image
-            width={100}
-            height={100}
-            className="rounded-md"
-            src={itemData.location.location_image_url}
-            alt="No image available"
-          />
-        </div>
-        <hr className="mt-2" />
+        {itemData.location.location_image_url && (
+          <div className="flex py-2 mb-2 w-[100px] h-[100px]">
+            <a href={itemData.location.location_image_url} target="_blank" rel="noopener noreferrer">
+              <Image
+                width={100}
+                height={100}
+                className="rounded-md w-[100px] h-[100px]"
+                src={itemData.location.location_image_url}
+                alt="No image available"
+              />
+            </a>
+          </div>
+        )}
+
+        <hr className="mt-5" />
       </div>
 
       <div className="px-6 mb-2">
         <div className="py-2">
           <span className="text-md font-semibold">User Information</span>
         </div>
-        <div className="flex mb-2 w-[100px] h-[100px]">
-          <Image
-            width={100}
-            height={100}
-            className="rounded-md"
-            src={itemData.user.image}
-            alt={`User Photo`}
-          />
-        </div>
+        {itemData.user.image && (
+          <div className="flex mb-2 w-[100px] h-[100px]">
+            <a href={itemData.user.image} target="_blank" rel="noopener noreferrer">
+            <Image
+              width={100}
+              height={100}
+              className="rounded-full w-[100px] h-[100px]"
+              src={itemData.user.image}
+              alt={`User Photo`}
+            />
+            </a>
+            
+          </div>
+        )}
+
         {userDataRows.map((row, index) => (
           <div key={index} className="flex flex-row w-full py-1">
             <div className="w-[30%] text-sm">{row.label}</div>

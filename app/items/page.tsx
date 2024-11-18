@@ -109,10 +109,6 @@ const ItemPage = () => {
   const downloadCsvFile = async () => {
     if(itemData.length > 0 || excludeIds.length !== pagination.total){
         try {
-            toast({
-                className: 'success_message',
-                description: "Downloading, Please Wait.",
-            })
             const params = { page: 1, limit: 1000, searchKey, status, excludeIds };
             const result = await DownloadCsvFile(params) as any;
             if (result.status === 200) {

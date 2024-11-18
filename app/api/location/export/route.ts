@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
       include: [
         {
           model: User,
+          as:'user',
           attributes: [],
           required: false,
         },
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest) {
           [fn("COALESCE", col("location_image_url"), ""), "location_image_url"],
           [fn("COALESCE", col("location_image"), ""), "location_image"],
           [fn("COALESCE", col("location_uid"), ""), "location_uid"],
-          [fn("COALESCE", col("User.name"), ""), "user_name"],
+          [fn("COALESCE", col("user.name"), ""), "user_name"],
           [
             literal(`DATE_FORMAT(locations.date_created, '%Y-%m-%d')`),
             "date_created",
@@ -76,8 +77,8 @@ export async function GET(req: NextRequest) {
           ],
           [
             literal(`CASE 
-                            WHEN User.user_type = 1 THEN 'Premium'
-                            WHEN User.user_type = 0 THEN 'Free'
+                            WHEN user.user_type = 1 THEN 'Premium'
+                            WHEN user.user_type = 0 THEN 'Free'
                             ELSE 'Unknown'
                         END`),
             "user_type",

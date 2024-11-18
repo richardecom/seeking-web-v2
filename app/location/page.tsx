@@ -123,6 +123,7 @@ const LocationPage = () => {
             
             const params = { page: 1, limit: 1000, searchKey, status, excludeIds };
             const result = await DownloadCsvFile(params) as any;
+            console.log("Result:", result)
             if(result.status === 401){
               router.push('/')
             } 
