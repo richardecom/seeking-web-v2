@@ -35,11 +35,12 @@ export async function GET(request) {
       include: [
         {
           model: User,
+          as: 'user',
           required: false,
           attributes: [
             "user_id",
             "name",
-            [fn("COALESCE", col("User.image"), ""), "image"],
+            [fn("COALESCE", col("user.image"), ""), "image"],
           ],
         },
       ],

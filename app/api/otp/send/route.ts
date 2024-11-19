@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const { email, type: type } = reqBody;
     const msg_type = emailType.find((item) => item.key === parseInt(type, 10));
     if (otp) {
-      const expiredTime = new Date(new Date().getTime() + 1 * 60 * 1000);
+      const expiredTime = new Date(new Date().getTime() + 15 * 60 * 1000);
       // const expiredTime = new Date(dateCreated.getTime() + 30 * 60 * 1000); //30 mins
       const payload = {
         email,

@@ -6,7 +6,9 @@ const protectedRoutes = [
   "/dashboard", 
   "/location",
   "/users",
-  "/items"
+  "/items",
+  "/profile",
+  "/categories"
 ];
 const apiRoutes = [
   "/api/category",

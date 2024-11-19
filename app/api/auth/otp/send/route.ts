@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
                 if(user.status === 1){ /**if account active */
 
                     if(otp){
-                        const expiredTime = new Date(new Date().getTime() + 1 * 60 * 1000);
+                        const expiredTime = new Date(new Date().getTime() + 15 * 60 * 1000);
                         const payload = {email,  type,  otp, date_created: expiredTime }
                         const response = await Otp.findOne({ where: { email, type } });
                         if(response){ /**update when existing data found */

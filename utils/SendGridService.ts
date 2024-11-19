@@ -42,7 +42,7 @@ export const sendRegistrationEmail = async ({
                 <div class="content">
                     <p style="color: #000">Thank you for registering with us. To complete your registration, please use the following OTP (One-Time Password):</p>
                     <p class="otp">${otp_code}</p>
-                    <p style="color: #000">This OTP is valid for 30 minutes. If you did not request this registration, please ignore this email.</p>
+                    <p style="color: #000">This OTP is valid for 15 minutes. If you did not request this registration, please ignore this email.</p>
                 </div>
                 <div class="footer">
                     <p>If you need help, please contact us at seeking@example.com.</p>
@@ -90,7 +90,7 @@ export const sendChangeEmail = async ({
                     <div class="content">
                         <p style="color: #000">We received a request to change the email for your account. To proceed, please use the following OTP (One-Time Password):</p>
                         <p class="otp">${otp_code}</p>
-                        <p style="color: #000">This OTP is valid for 30 minutes. If you did not request this password reset, please ignore this email.</p>
+                        <p style="color: #000">This OTP is valid for 15 minutes. If you did not request this password reset, please ignore this email.</p>
                     </div>
                     <div class="footer">
                         <p>If you need help, please contact us at seeking@example.com.</p>
@@ -139,7 +139,7 @@ export const sendForgotPassword = async ({
                     <div class="content">
                         <p style="color: #000">Dear ${user.name}, We received a request to reset the password for your account. To proceed, please use the following OTP (One-Time Password):</p>
                         <p class="otp">${otp_code}</p>
-                        <p style="color: #000">This OTP is valid for 1 day. If you did not request this password reset, please ignore this email.</p>
+                        <p style="color: #000">This OTP is valid for 15 minutes. If you did not request this password reset, please ignore this email.</p>
                     </div>
                     <div class="footer">
                         <p>If you need help, please contact us at seeking@example.com.</p>
