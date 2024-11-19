@@ -8,7 +8,7 @@ const UserProfile = ({ userImage, userName, itemName, dateCreated }) => {
         <Image
           width={74}
           height={74}
-          src={`https://seeking-dev.s3.ap-southeast-1.amazonaws.com/${userImage}` || "/images/user.png"}
+          src={`${userImage}` || "/images/user.png"}
           alt="User"
           style={{ width: "auto", height: "auto" }}
         />

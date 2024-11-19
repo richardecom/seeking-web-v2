@@ -4,7 +4,7 @@ import { GetTokenData } from "@/app/helper/tokenHelper";
 import User from "@/db/models/User";
 import Item from "@/db/models/Item";
 import { NextRequest, NextResponse } from "next/server";
-import { col, fn, Op } from "sequelize";
+import { col, fn, literal, Op } from "sequelize";
 import Location from "@/db/models/Location";
 
 export async function GET(request:NextRequest) {
@@ -33,11 +33,72 @@ export async function GET(request:NextRequest) {
             whereClause.status = 1;
 
             const offset = (query.page - 1) * query.limit;
+            // const response = await Location.findAll({
+            //     where: whereClause,
+            //     limit: query.limit,
+            //     offset: offset,
+            // })
+            User.hasMany(Location, { foreignKey: "user_id" });
+            Location.belongsTo(User, { foreignKey: "user_id" });
             const response = await Location.findAll({
                 where: whereClause,
                 limit: query.limit,
                 offset: offset,
-            })
+                order: [["location_id", "DESC"]],
+                include: [
+                  {
+                    model: User,
+                    as: 'user',
+                    attributes: {
+                      exclude: ["password"],
+                      include: [
+                        [
+                          literal(
+                            `CASE WHEN user.status = 1 THEN 'Active' ELSE 'Inactive' END`
+                          ),
+                          "status",
+                        ],
+                        [
+                          literal(
+                            `CASE WHEN user.user_type = 1 THEN 'Premium' ELSE 'Free' END`
+                          ),
+                          "user_type",
+                        ],
+                        [
+                          literal(
+                            `CASE WHEN user.user_role = 1 THEN 'Administrator' ELSE 'Mobile User' END`
+                          ),
+                          "user_role",
+                        ],
+                        [fn("COALESCE", col("user.image"), ""), "image"],
+                        [
+                          literal(`DATE_FORMAT(user.date_created, '%Y-%m-%d')`),
+                          "date_created",
+                        ],
+                      ],
+                    },
+                    required: false,
+                  },
+                ],
+                attributes: {
+                  include: [
+                    [fn("COALESCE", col("location_image_url"), ""), "location_image_url"],
+                    [fn("COALESCE", col("location_image"), ""), "location_image"],
+                    [fn("COALESCE", col("location_uid"), ""), "location_uid"],
+                    [
+                      literal(
+                        `CASE WHEN locations.status = 1 THEN 'Active' ELSE 'Archived' END`
+                      ),
+                      "status",
+                    ],
+                    [
+                      literal(`DATE_FORMAT(locations.date_created, '%Y-%m-%d')`),
+                      "date_created",
+                    ],
+                  ],
+                },
+              });
+
             const total = await Location.count({ where: whereClause });
             const pages = Math.ceil(total / query.limit);
 

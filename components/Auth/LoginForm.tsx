@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 
 export const LoginForm = () => {
   const { login: contextLogin } = useUser();
@@ -14,7 +15,7 @@ export const LoginForm = () => {
     email_address: '',
     password: '',
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
     email_address: false,
     password: false,
@@ -84,7 +85,9 @@ export const LoginForm = () => {
     }
 // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [loginForm]);
-
+const togglePasswordVisibility = () => {
+  setShowPassword(!showPassword);
+};
 
   return (
     <div className="mt-7">
@@ -114,7 +117,8 @@ export const LoginForm = () => {
           <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
             Password
           </label>
-          <div className="mt-2">
+          <div className='flex items-center w-full'>
+          <div className="mt-2 relative w-full">
             <input
               id="password"
               name="password"
@@ -125,10 +129,24 @@ export const LoginForm = () => {
               onChange={onValueChange}
               className="block w-full rounded-md border text-sm border-gray-300 p-2 shadow-sm transition duration-200 placeholder:text-gray-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
-            {touchedFields.password && errors.password && (
-                  <p className="text-red-500 text-xs font-normal  py-1 px-1">{errors.password}</p>
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 flex items-center px-3"
+            >
+              {showPassword ? (
+                <EyeOffIcon className="h-5 w-5 text-gray-500" />
+              ) : (
+                <EyeIcon className="h-5 w-5 text-gray-500" />
               )}
+              </button>
+            </div>
           </div>
+              {touchedFields.password && errors.password && (
+                <p className="text-red-500 text-xs font-normal  py-1 px-1">{errors.password}</p>
+              )}
+            </div>
+          <div>
         </div>
 
         <div className='pt-3'>

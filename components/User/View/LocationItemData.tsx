@@ -36,6 +36,8 @@ import DeleteItem from "@/components/Items/DeleteItem";
 import FormLayout from "@/components/Shared/FormLayout";
 import EditItem from "@/components/Items/EditItem";
 import ViewItemData from "@/components/Items/ViewItemData";
+import EditLocation from "@/components/Location/EditLocation";
+import DeleteLocation from "@/components/Location/DeleteLocation";
 
 const LocationItemData = ({ user_id }) => {
   const router = useRouter();
@@ -51,8 +53,11 @@ const LocationItemData = ({ user_id }) => {
   const [itemCurrentPage, setItemCurrentPage] = useState(1);
   const [viewDialog, setViewDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
+  const [editLocDialog, setEditLocationDialog] = useState(false);
+  const [deleteLocation, setDeleteLocation] = useState(false);
   const [editDialog, setEditDialog] = useState(false);
   const [item, setItem] = useState({});
+  const [location, setLocation] = useState({});
   const [paginationMap, setPaginationMap] = useState<{
     [key: number]: {
       currentPage: number;
@@ -72,6 +77,13 @@ const LocationItemData = ({ user_id }) => {
     setEditDialog(false);
     fetchLocationItems(item.location_id, page);
   };
+
+  const handleCloseLocation = () => {
+    setEditLocationDialog(false);
+    setDeleteLocation(false);
+    fetchUserLocation();
+  };
+
   const fetchUserData = useCallback(async () => {
     try {
       const data = (await GetUserByID(user_id)) as any;
@@ -88,7 +100,7 @@ const LocationItemData = ({ user_id }) => {
     try {
       const payload = { page, limit, searchKey, status };
       const result = await GetRecordsByUserID(user_id, payload);
-      console.log("RESULT: ", result)
+      console.log("RESULT: ", result);
       if (result.status === 200) {
         setLocationList(result.data.list);
         setPagination(result.data.pagination);
@@ -220,40 +232,67 @@ const LocationItemData = ({ user_id }) => {
           {location_list && location_list.length > 0 ? (
             location_list.map((location, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger>
-                  <div className="flex items-center w-full">
-                    <Image
-                      width={60}
-                      height={60}
-                      className="w-[60px] h-[60px] rounded-md"
-                      src={
-                        location?.location_image_url
-                          ? location?.location_image_url
-                          : "/images/no_image_available.jpg"
-                      }
-                      alt={`location_img_${index}`}
-                    />
-                    <div>
-                      <span
-                        className={`ml-4 inline-flex items-center rounded-md  px-2 py-1 text-xs font-medium  ring-1 ring-inset  ${
-                          location.status === "Active"
-                            ? "bg-green-50 text-green-700 ring-green-600/20"
-                            : "ring-red-600/10 text-red-700 bg-red-50"
-                        }`}
-                      >
-                        {location.status}
-                      </span>
-                    </div>
-                    <div className="flex flex-col justify-start items-left">
-                      <span className="ml-4 font-semibold text-left">
-                        {location.building}
-                      </span>
-                      <p className="ml-4 text-sm text-left">{location.room}</p>
-                    </div>
+                <div className="flex w-full items-center justify-between">
+                  <div className="w-full">
+                    <AccordionTrigger className="flex w-[80%]">
+                      <div className="flex w-full items-center">
+                        <Image
+                          width={60}
+                          height={60}
+                          className="w-[60px] h-[60px] rounded-md"
+                          src={
+                            location?.location_image_url
+                              ? location?.location_image_url
+                              : "/images/no_image_available.jpg"
+                          }
+                          alt={`location_img_${index}`}
+                        />
+                        <div>
+                          <span
+                            className={`ml-4 inline-flex items-center rounded-md  px-2 py-1 text-xs font-medium  ring-1 ring-inset  ${
+                              location.status === "Active"
+                                ? "bg-green-50 text-green-700 ring-green-600/20"
+                                : "ring-red-600/10 text-red-700 bg-red-50"
+                            }`}
+                          >
+                            {location.status}
+                          </span>
+                        </div>
+                        <div className="flex flex-col justify-start items-left">
+                          <span className="ml-4 font-semibold text-left">
+                            {location.building}
+                          </span>
+                          <p className="ml-4 text-sm text-left">
+                            {location.room}
+                          </p>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
                   </div>
-                </AccordionTrigger>
+                  <div className="button-area flex mt-2 px-1">
+                    <EditButton
+                      onClick={() => {
+                        setEditLocationDialog(true);
+                        setLocation(location);
+                      }}
+                      disabled={false}
+                      hidden={false}
+                    />
+                    <DeleteButton
+                      onClick={() => {
+                        setDeleteLocation(true);
+                        setLocation(location);
+                      }}
+                      disabled={false}
+                      hidden={false}
+                    />
+                  </div>
+                </div>
+
                 <AccordionContent>
+                <hr />
                   <div className="w-full md:flex md:justify-between px-2 py-3">
+                    
                     <div className="mb-3 md:w-[30%]">
                       <span>Item list</span>
                     </div>
@@ -502,6 +541,39 @@ const LocationItemData = ({ user_id }) => {
           </FormLayout>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={editLocDialog} onOpenChange={setEditLocationDialog}>
+        <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Location</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <FormLayout>
+            <EditLocation
+              locationData={location}
+              onSubmit={() => {
+                handleCloseLocation()
+              }}
+            />
+          </FormLayout>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={deleteLocation} onOpenChange={setDeleteLocation}>
+        <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">
+          <DialogHeader>
+            <DialogTitle>Confirm</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="h-auto form-body mb-1 w-full scrollbar px-1">
+              <DeleteLocation locationData={location} onSubmit={() => {
+                handleCloseLocation()
+              }} />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
 
       <Dialog open={viewDialog} onOpenChange={setViewDialog}>
         <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
