@@ -1,89 +1,74 @@
-// import multer, { FileFilterCallback, MulterError } from 'multer';
-// import multerS3 from 'multer-s3';
-// import AWS from 'aws-sdk';
-// import { NextApiRequest, NextApiResponse } from 'next';
-// import { S3Client } from '@aws-sdk/client-s3';
-// // Configure AWS SDK with credentials
-// // AWS.config.update({
-// //     region: process.env.AWS_REGION,
-// //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-// //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-// // });
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
-// const s3Config = new S3Client({
-//     region: process.env.AWS_REGION,
-//     credentials:{
-//        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-//    }
-//  })
+// Initialize the AWS S3 Client
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
-// const bucketName = process.env.AWS_BUCKET_NAME;
+const Bucket = process.env.AWS_BUCKET_NAME;
+// Define allowed MIME types (whitelist)
+const whitelistImages = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/svg+xml",
+  "image/gif",
+];
 
-// // Define the allowed file types
-// const whitelistFile = ['text/csv', 'application/vnd.ms-excel'];
-// const whitelistImages = [
-//     'image/png',
-//     'image/jpeg',
-//     'image/jpg',
-//     'image/webp',
-//     'image/svg+xml',
-//     'image/gif',
-// ];
+type UploadFilesResponse = string[] | { error: string; invalidFiles: string[] };
 
-// // Define the file filter function with types
-// const fileFilter: multer.Options['fileFilter'] = (req, file, cb: FileFilterCallback) => {
-//     if (file.fieldname === 'uploadedFiles' && !whitelistFile.includes(file.mimetype)) {
-//         return cb(new Error('File is not a valid csv.'));
-//     }
-//     if (file.fieldname === 'uploadedImages' && !whitelistImages.includes(file.mimetype)) {
-//         return cb(new Error('File is not a valid image.'));
-//     }
-//     cb(null, true);
-// };
+// Service to upload files to S3
+export const uploadFilesToS3 = async (
+  files: File[]
+): Promise<UploadFilesResponse> => {
+  const uploadedFileUrls: string[] = [];
 
-// // Define the multer upload middleware
-// const upload = multer({
-//     storage: multerS3({
-//         s3: s3Config,
-//         bucket: bucketName,
-//         acl: 'public-read',
-//         contentType: multerS3.AUTO_CONTENT_TYPE,
-//         key: (req, file, cb) => {
-//             cb(null, Date.now() + '--' + file.originalname);
-//         },
-//     }),
-//     limits: {
-//         fileSize: 20 * 1024 * 1024, // no larger than 20MB
-//     },
-//     fileFilter,
-// }).fields([
-//     { name: 'uploadedFiles', maxCount: 1 },
-//     { name: 'uploadedImages', maxCount: 10 },
-// ]);
+  // Validate file types
+  const invalidFiles = files.filter(
+    (file) => !whitelistImages.includes(file.type)
+  );
+  if (invalidFiles.length > 0) {
+    // throw new Error(`Invalid file types: ${invalidFiles.map(file => file.name).join(", ")}`);
+    return {
+      error: `Invalid file type.`,
+      invalidFiles: invalidFiles.map((file) => file.name),
+    };
+  }
 
-// // Define the TypeScript signature for the Next.js API middleware
-// const multerMiddleware = (req: NextApiRequest, res: NextApiResponse, next: () => void) => {
-//     upload(req, res, (err: Error | MulterError) => {
-//         if (err instanceof multer.MulterError) {
-//             return res.status(500).json({
-//                 status: '500',
-//                 error: err.name,
-//                 message: `File upload error: ${err.message}`,
-//                 description: err,
-//             });
-//         }
-//         if (err) {
-//             console.error(err);
-//             return res.status(500).json({
-//                 status: '500',
-//                 error: 'FILE UPLOAD ERROR',
-//                 message: 'Something went wrong during the file upload',
-//                 description: err,
-//             });
-//         }
-//         next();
-//     });
-// };
+  // Process each file
+  for (const file of files) {
+    const fileName = `${Date.now()}-${file.name}`; // Generate unique file name
+    const fileBuffer = Buffer.from(await file.arrayBuffer()); // Convert the file to a Buffer
 
-// export default multerMiddleware;
+    try {
+      // Upload file to S3
+      const command = new PutObjectCommand({
+        Bucket,
+        Key: fileName,
+        Body: fileBuffer,
+        ContentType: file.type,
+        ACL: "public-read", // Make the file publicly accessible
+      });
+
+      await s3.send(command);
+
+      // Construct the file's URL after uploading
+      const fileUrl = `https://${Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+      uploadedFileUrls.push(fileUrl);
+    } catch (error) {
+      console.error("S3 Upload Error:", error);
+      //   throw new Error("File upload failed. Please try again.");
+      return {
+        error: `File upload failed. Please try again.`,
+        invalidFiles: [],
+      };
+    }
+  }
+
+  return uploadedFileUrls; // Return an array of URLs
+};
