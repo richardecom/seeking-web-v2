@@ -17,6 +17,7 @@ import SidebarItem from "./SidebarItems";
 import UseLocalStorage from "@/hooks/UseLocalStorage";
 import { useUser } from "@/context/UserContext";
 import { CreateInitials } from "@/utils/GenerateInitial";
+import { useRouter } from "next/navigation";
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
@@ -65,6 +66,7 @@ export const SidebarIndex = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [pageName, setPageName] = UseLocalStorage("selectedMenu", "dashboard");
   const [userInitial, setUserInitial] = useState("");
   const { currentUser } = useUser();
+  const router = useRouter()
 
   useEffect(() => {
     try {
@@ -76,6 +78,10 @@ export const SidebarIndex = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       console.log("Error getting user initial.");
     }
   }, [currentUser]);
+
+  const handleRoute = () =>{
+    router.push('/dashboard')
+  }
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
@@ -102,10 +108,10 @@ export const SidebarIndex = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 alt="User"
               /> */}
 
-              <div className="relative w-[60px] h-[60px] ">
+              <div className="relative w-[60px] h-[60px] " onClick={handleRoute}>
                 {currentUser?.image ? (
                   <Image
-                    className="rounded-full cursor-pointer border-2 border-green-400"
+                    className="rounded-full cursor-pointer border-2 border-black-800"
                     src={currentUser?.image}
                     alt="User"
                     layout="fill"
@@ -113,7 +119,7 @@ export const SidebarIndex = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   />
                 ) : (
                   <div className="flex rounded-full border justify-center h-full w-full items-center border-4 border-green-400 bg-purple-400">
-                    <span className="text-5xl font-bold text-white">
+                    <span className="text-2xl font-bold text-white">
                       {userInitial}
                     </span>
                   </div>

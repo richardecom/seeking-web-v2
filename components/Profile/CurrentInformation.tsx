@@ -36,7 +36,7 @@ const CurrentInformation = () => {
             <div className="relative w-[130px] h-[130px] ">
               {currentUser?.image ? (
                 <Image
-                  className="rounded-full cursor-pointer border-4 border-green-400"
+                  className="rounded-full cursor-pointer border-4 border-black-800"
                   src={currentUser?.image}
                   alt="User"
                   layout="fill"

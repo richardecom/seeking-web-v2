@@ -31,30 +31,40 @@ const ViewProfilePage = ({ params }) => {
   useEffect(() => {
     fetchUserData();
   }, [fetchUserData]);
+
+  console.log("user", user)
   return (
     <DefaultLayout>
-      <ContentTitle
-        title={`View > ${user.name} 's Profile `}
-        icon={<UserRound />}
-      />
+      {
+        user.name ? (
+          <>
+          <ContentTitle
+            title={`View > ${user.name} 's Profile`}
+            icon={<UserRound />}
+          />
+          {user.role_code === "mobile_user" ? (
+            <ProfileLayout>
+              <LeftProfileWrapper>
+                <ProfileInformation user={user} />
+                <SubscriptionHistory />
+              </LeftProfileWrapper>
+              <RightProfileWrapper>
+                <LocationItemData user_id={params.user_id} />
+              </RightProfileWrapper>
+            </ProfileLayout>
+          ) : (
+            <ProfileLayout>
+              <FullProfileWrap>
+                <AdminProfile user={user} />
+              </FullProfileWrap>
+            </ProfileLayout>
+          )}
+          </>
+        ):(<></>)
+      }
+      
 
-      {user.role_code === "mobile_user" ? (
-        <ProfileLayout>
-          <LeftProfileWrapper>
-            <ProfileInformation user={user} />
-            <SubscriptionHistory />
-          </LeftProfileWrapper>
-          <RightProfileWrapper>
-            <LocationItemData user_id={params.user_id} />
-          </RightProfileWrapper>
-        </ProfileLayout>
-      ) : (
-        <ProfileLayout>
-          <FullProfileWrap>
-            <AdminProfile user={user} />
-          </FullProfileWrap>
-        </ProfileLayout>
-      )}
+      
     </DefaultLayout>
   );
 };

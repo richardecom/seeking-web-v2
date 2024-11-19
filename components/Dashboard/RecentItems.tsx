@@ -16,6 +16,10 @@ const RecentItems = () => {
   };
   useEffect(() => {
     getRecent();
+    const intervalId = setInterval(() => {
+      getRecent();
+    }, 3000);
+    return () => clearInterval(intervalId);
   }, []);
   return (
     <Card>

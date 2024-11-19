@@ -67,27 +67,29 @@ export async function GET(request:NextRequest, context: any) {
                 include: [
                     { 
                         model: User ,
+                        as:'user',
                         required: false,
                         attributes: {
                             exclude: ['password'],
                             include: [
-                                [literal(`CASE WHEN User.status = 1 THEN 'Active' ELSE 'Inactive' END`), 'status'],
-                                [literal(`CASE WHEN User.user_type = 1 THEN 'Premium' ELSE 'Free' END`), 'user_type'],
-                                [literal(`CASE WHEN User.user_role = 1 THEN 'Administrator' ELSE 'Mobile User' END`), 'user_role'],
-                                [fn('COALESCE', col('User.image'), ''), 'image'],
-                                [literal(`DATE_FORMAT(User.date_created, '%Y-%m-%d')`), 'date_created'],
+                                [literal(`CASE WHEN user.status = 1 THEN 'Active' ELSE 'Inactive' END`), 'status'],
+                                [literal(`CASE WHEN user.user_type = 1 THEN 'Premium' ELSE 'Free' END`), 'user_type'],
+                                [literal(`CASE WHEN user.user_role = 1 THEN 'Administrator' ELSE 'Mobile User' END`), 'user_role'],
+                                [fn('COALESCE', col('user.image'), ''), 'image'],
+                                [literal(`DATE_FORMAT(user.date_created, '%Y-%m-%d')`), 'date_created'],
                             ]
                         }, 
                     },
                     { 
                         model: Location,
+                        as:'location',
                         required: false,
                         attributes: {
                             exclude: ['location_image', 'location_uid'],
                             include: [
-                                [literal(`CASE WHEN Location.status = 1 THEN 'Active' ELSE 'Archived' END`), 'status'],
-                                [fn('COALESCE', col('Location.location_image_url'), ''), 'location_image_url'],
-                                [literal(`DATE_FORMAT(Location.date_created, '%Y-%m-%d')`), 'date_created'],
+                                [literal(`CASE WHEN location.status = 1 THEN 'Active' ELSE 'Archived' END`), 'status'],
+                                [fn('COALESCE', col('location.location_image_url'), ''), 'location_image_url'],
+                                [literal(`DATE_FORMAT(location.date_created, '%Y-%m-%d')`), 'date_created'],
                             ]
                         },
                     },

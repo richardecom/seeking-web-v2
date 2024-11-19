@@ -148,7 +148,7 @@ export async function GET(request:NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const reqBody = await request.json();
-        const requiredFields = ['item_name', 'description', 'quantity', 'rating', 'location_id', 'category_id', 'user_id'];
+        const requiredFields = ['item_name', 'description', 'rating', 'location_id', 'category_id', 'user_id'];
         const missingFields = requiredFields.filter(field => !reqBody[field]);
 
         if (missingFields.length > 0) {
