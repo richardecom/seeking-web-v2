@@ -1,16 +1,18 @@
 import React from "react";
+import Spinner from "./Spinner";
 
-const SubmitButton = ({isFormValid, buttonName}) => {
+const SubmitButton = ({isFormValid, buttonName, isLoading}) => {
   return (
     <button
-      disabled={!isFormValid}
+      disabled={!isFormValid || isLoading}
       type="submit"
-      className={`flex justify-center items-center rounded-md  px-4 h-9 text-xs leading-4 text-white shadow-sm  ${
+      className={`flex justify-center items-center rounded-md  px-4 h-9 text-xs leading-4 text-white shadow-sm bg-[#b00202] hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-600 transition duration-300 active:bg-[#b00202] active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed${
         isFormValid
-          ? "bg-[#b00202] hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-600 transition duration-300"
-          : "bg-gray-400 cursor-not-allowed"
+          ? ""
+          : ""
       }`}
     >
+      {isLoading && (<Spinner className="w-4 h-4"/>)}
       {buttonName}
     </button>
   );

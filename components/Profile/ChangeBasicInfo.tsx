@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
 import SubmitButton from "../Shared/SubmitButton";
 import { useRouter } from "next/navigation";
+import { UpdateProfile } from "@/hooks/ProfileHooks";
 
 interface FormData {
   user_id: number | null;
@@ -26,7 +27,7 @@ interface FormData {
 
 const ChangeBasicInfo = () => {
   const router = useRouter();
-  const { currentUser, updateBasic } = useUser();
+  const { currentUser, updateBasic, login: contextLogin } = useUser();
   console.log('currentUser: ', currentUser)
   const initialData = {
     user_id: currentUser?.user_id,
@@ -38,6 +39,7 @@ const ChangeBasicInfo = () => {
   const [formData, setFormData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const formSchema = z.object({
     name: z.string().min(2, { message: "Name is required*" }).max(100, { message: "Name must not exceed 100 characters." }),
@@ -105,6 +107,8 @@ const ChangeBasicInfo = () => {
   // Handle form submission
   const updateBasicInfo = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
+
+      setIsLoading(true)
       event.preventDefault();
 
           const fd = new FormData();
@@ -116,13 +120,30 @@ const ChangeBasicInfo = () => {
               fd.append('imageFile', formData.image)
             }
       try {
-        updateBasic(fd, 'basic')
+        // updateBasic(fd, 'basic')
+        const result = await UpdateProfile(fd, 'basic');
+        if(result.status === 401){
+          router.push('/')
+        }else if(result.status === 201){
+          contextLogin(result.data)
+          toast({
+            className: "success_message",
+            description: result.message,
+          });
+        }else{
+          toast({
+            className: "error_message",
+            description: "Error updating your basic information",
+          });
+        }
       } catch (error) {
         console.log("Error updating user data:", error);
         toast({
           className: "error_message",
           description: "An error occurred while updating your data.",
         });
+      } finally{
+        setIsLoading(false)
       }
     },
     [formData]
@@ -209,7 +230,7 @@ const ChangeBasicInfo = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end">
-          <SubmitButton buttonName="Save Changes" isFormValid={isFormValid} />
+          <SubmitButton buttonName="Save Changes" isFormValid={isFormValid} isLoading={isLoading}/>
         </div>
       </form>
     </CardLayout>

@@ -3,13 +3,16 @@ import { DeleteCategory } from '@/hooks/CategoryHook';
 import { ArchivedItem } from '@/hooks/ItemHook';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import React from 'react'
+import React, { useState } from 'react'
+import Spinner from '../Shared/Spinner';
 
-const DeleteItem = ({deleteData, onSubmit}) => {
+const DeleteCat = ({deleteData, onSubmit}) => {
   console.log(deleteData)
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast()
     const deleteCat = async (event) =>{
+        setIsSubmitting(true)
         event.preventDefault();
         try {
             const result = await DeleteCategory(deleteData.category_id)
@@ -26,6 +29,8 @@ const DeleteItem = ({deleteData, onSubmit}) => {
             }
         } catch (error) {
             console.log('ERROR: archivedLocation function: ', error)
+        } finally{
+            setIsSubmitting(false)
         }
     }
 
@@ -41,14 +46,17 @@ const DeleteItem = ({deleteData, onSubmit}) => {
             Cancel
         </button>
         <button
+        disabled={isSubmitting}
         onClick={deleteCat}
             type="button"
-            className="inline-flex justify-center rounded-md bg-red-500 px-4 py-2 text-sm  text-white shadow-sm hover:bg-red-600 w-full sm:w-auto">
-            Yes, Archive it!
+            className="inline-flex items-center justify-center rounded-md bg-red-500 px-4 py-2 text-sm  text-white shadow-sm hover:bg-red-600 w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-gray-400">
+            {
+                isSubmitting && (<Spinner className='w-4 h-4'/>) 
+            } Yes, Archive it!
         </button>
     </div>
     </>
   )
 }
 
-export default DeleteItem
+export default DeleteCat

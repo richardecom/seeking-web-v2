@@ -16,19 +16,18 @@ interface SidebarItemProps {
 const SidebarItem: React.FC<SidebarItemProps> = ({ item, pageName, setPageName }) => {
   const pathname = usePathname();
 
-  const handleClick = () => {
-    const updatedPageName = pageName !== item.label.toLowerCase() ? item.label.toLowerCase() : "";
-    setPageName(item.route);
-    // console.log("updatedPageName", updatedPageName)
-  };
+  // const handleClick = () => {
+  //   const updatedPageName = pageName !== item.label.toLowerCase() ? item.label.toLowerCase() : "";
+  //   setPageName(item.route);
+  // };
 
   const isItemActive = item.route === pathname;
 
   return (
-    <li>
+    <li className="active:scale-90 active:shadow-lg focus:outline-none transition transform duration-300 ease-in-out">
       <Link
         href={item.route}
-        onClick={handleClick}
+        // onClick={handleClick}
         className={`p-2.5 flex items-center text-sm cursor-pointer ${
           isItemActive ? "bg-gray-200 bg-gradient-to-r from-[#800000] to-gray-200 text-[#FFFFFF] font-bold" : ""
         }`}

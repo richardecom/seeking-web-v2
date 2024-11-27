@@ -47,7 +47,7 @@ export async function GET(req: NextRequest){
         }
 
         const offset = (query.page - 1) * query.limit;
-        const response = await User.findAll({
+        const {count, rows} = await User.findAndCountAll({
             where: whereClause,
             limit: query.limit,
             order: [['user_id', 'DESC']],
@@ -70,13 +70,14 @@ export async function GET(req: NextRequest){
                 ]
             },
         })
-        const total = await User.count({ where: whereClause });
+        // const total = await User.count({ where: whereClause });
+        const total = count;
         const pages = Math.ceil(total / query.limit);
 
         const before = query.page > 1 ? +query.page - 1 : 1;
         const next   = query.page < pages ? +query.page + 1 : pages;
 
-        const list = response.map((user, index) => ({
+        const list = rows.map((user, index) => ({
             number: (query.page - 1) * query.limit + index + 1,
             selected: true,
             ...user.dataValues,

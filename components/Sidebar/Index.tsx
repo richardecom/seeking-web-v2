@@ -18,6 +18,7 @@ import UseLocalStorage from "@/hooks/UseLocalStorage";
 import { useUser } from "@/context/UserContext";
 import { CreateInitials } from "@/utils/GenerateInitial";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
@@ -79,9 +80,9 @@ export const SidebarIndex = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
   }, [currentUser]);
 
-  const handleRoute = () =>{
-    router.push('/dashboard')
-  }
+  // const handleRoute = () =>{
+  //   router.push('/dashboard')
+  // }
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
@@ -96,19 +97,8 @@ export const SidebarIndex = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         <div className="sidebar-header h-24">
           <div className="block">
             <div className="flex items-center justify-center h-20">
-              {/* <Image
-                className="rounded-full cursor-pointer "
-                width={63}
-                height={63}
-                src="/images/user.jpg"
-                style={{
-                  width: "auto",
-                  height: "auto",
-                }}
-                alt="User"
-              /> */}
-
-              <div className="relative w-[60px] h-[60px] " onClick={handleRoute}>
+              <Link href={'/dashboard'}>
+              <div className="relative w-[60px] h-[60px]">
                 {currentUser?.image ? (
                   <Image
                     className="rounded-full cursor-pointer border-2 border-black-800"
@@ -125,6 +115,7 @@ export const SidebarIndex = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </div>
                 )}
               </div>
+              </Link>
             </div>
             <div className="flex items-center justify-center h-6 m-1 mb-6 text-[#800000] font-bold">
               <h5>{currentUser?.name}</h5>

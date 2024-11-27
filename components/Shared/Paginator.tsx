@@ -16,7 +16,7 @@ const Paginator = ({ pagination, onPageChange, currentPage }: PaginatorButtonPro
                 <div className='flex space-x-1  items-center justify-center mb-2'>
                     <button
                         type="button"
-                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300 ${currentPage === 1 || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000]'}`}
+                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300 ${currentPage === 1 || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000] active:bg-[#b00202] active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out'}`}
                         disabled={currentPage === 1 || pagination.total === 0}
                         onClick={() => currentPage > 1 && onPageChange(1)}
                     >
@@ -25,7 +25,7 @@ const Paginator = ({ pagination, onPageChange, currentPage }: PaginatorButtonPro
 
                     <button
                         type="button"
-                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300 ${currentPage === 1 || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000]'}`}
+                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300 ${currentPage === 1 || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000] active:bg-[#b00202] active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out'}`}
                         disabled={currentPage === 1 || pagination.total === 0}
                         onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}>
                         <ChevronLeft className='p-1' />
@@ -33,7 +33,7 @@ const Paginator = ({ pagination, onPageChange, currentPage }: PaginatorButtonPro
 
                     <button
                         type="button"
-                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300 ${currentPage === pagination.pages || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000]'}`}
+                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300 ${currentPage === pagination.pages || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000] active:bg-[#b00202] active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out'}`}
                         disabled={currentPage === pagination.pages || pagination.total === 0}
                         onClick={() => currentPage < pagination.pages && onPageChange(currentPage + 1)}>
                         <ChevronRight className='p-1' />
@@ -41,7 +41,7 @@ const Paginator = ({ pagination, onPageChange, currentPage }: PaginatorButtonPro
 
                     <button
                         type="button"
-                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300 ${currentPage === pagination.pages || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000]'}`}
+                        className={`flex items-center justify-center rounded-md w-8 h-9 text-xs font-semibold text-white shadow-sm transition duration-300  ${currentPage === pagination.pages || pagination.total === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#b00202] hover:bg-[#800000] active:bg-[#b00202] active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out'}`}
                         disabled={currentPage === pagination.pages || pagination.total === 0}
                         onClick={() => currentPage < pagination.pages && onPageChange(pagination.pages)}>
                         <ChevronLast className='p-1' />

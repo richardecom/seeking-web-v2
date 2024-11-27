@@ -59,6 +59,7 @@ export async function PATCH(req: Request) {
       console.log("file", files);
       
       if (files.length > 0) {
+        console.log('test', process.env.RUN_ENV === "local")
         if (process.env.RUN_ENV === "local") {
 
           const filePath = `/uploads/images/${files[0].name}`;

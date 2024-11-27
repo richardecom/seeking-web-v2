@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
         });
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.RUN_ENV === 'development',
+            secure: process.env.RUN_ENV === 'production',
             path: '/',
             expires: new Date(0), 
         };

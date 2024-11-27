@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ArchivedLocation } from '@/hooks/LocationHooks';
-import React , { useEffect } from 'react'
+import React , { useEffect, useState } from 'react'
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation';
+import Spinner from '../Shared/Spinner';
 
 const DeleteLocation = ({ locationData, onSubmit }) => {
+  console.log("LOCATION DATA", locationData)
     const router = useRouter();
     const { toast } = useToast()
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const deleteLocation = async (event) =>{
+      setIsSubmitting(true)
         event.preventDefault();
         try {
             const result = await ArchivedLocation({location_id: locationData.location_id})
@@ -28,6 +33,8 @@ const DeleteLocation = ({ locationData, onSubmit }) => {
                 className: 'error_message',
                 description: 'Error updating location data',
             })
+        }finally{
+          setIsSubmitting(false)
         }
     }
 
@@ -43,10 +50,13 @@ const DeleteLocation = ({ locationData, onSubmit }) => {
             Cancel
         </button>
         <button
-        onClick={deleteLocation}
-            type="button"
-            className="inline-flex justify-center rounded-md bg-red-500 px-4 py-2 text-sm  text-white shadow-sm hover:bg-red-600 w-full sm:w-auto">
-            Yes, Archive it!
+          onClick={deleteLocation}
+          disabled = {isSubmitting}
+          type="button"
+          className="inline-flex items-center justify-center rounded-md bg-red-500 px-4 py-2 text-sm  text-white shadow-sm hover:bg-red-600 w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-gray-400">
+           {
+            isSubmitting && (<Spinner className='w-4 h-4'/> )
+           } Yes, Archive it!
         </button>
     </div>
     </>

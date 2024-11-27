@@ -14,13 +14,13 @@ const RecentItems = () => {
       console.log(err);
     }
   };
-  useEffect(() => {
-    getRecent();
-    const intervalId = setInterval(() => {
-      getRecent();
-    }, 3000);
-    return () => clearInterval(intervalId);
-  }, []);
+  // useEffect(() => {
+  //   getRecent();
+  //   const intervalId = setInterval(() => {
+  //     getRecent();
+  //   }, 3000);
+  //   return () => clearInterval(intervalId);
+  // }, []);
   return (
     <Card>
       <div className="flex flex-col space-y-1.5 p-6">

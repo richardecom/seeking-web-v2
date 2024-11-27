@@ -1,14 +1,17 @@
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { DeleteUserAccount } from '@/hooks/UserHooks';
-import React from 'react'
+import React, { useState } from 'react'
+import Spinner from '../Shared/Spinner';
 
 const DeleteUser = ({deleteData, onSubmit}) => {
 
     console.log(deleteData)
   const router = useRouter();
     const { toast } = useToast()
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const deleteCat = async (event) =>{
+        setIsSubmitting(true)
         event.preventDefault();
         try {
             const result = await DeleteUserAccount(deleteData.user_id)
@@ -29,6 +32,8 @@ const DeleteUser = ({deleteData, onSubmit}) => {
             }
         } catch (error) {
             console.log('ERROR: DeleteUser function: ', error)
+        } finally{
+            setIsSubmitting(false)
         }
     }
 
@@ -46,8 +51,11 @@ const DeleteUser = ({deleteData, onSubmit}) => {
         <button
         onClick={deleteCat}
             type="button"
-            className="inline-flex justify-center rounded-md bg-red-500 px-4 py-2 text-sm  text-white shadow-sm hover:bg-red-600 w-full sm:w-auto">
-            Yes, Deactivate it!
+            disabled = {isSubmitting}
+            className="inline-flex items-center justify-center rounded-md bg-red-500 px-4 py-2 text-sm  text-white shadow-sm hover:bg-red-600 w-full sm:w-auto disabled:cursor-not-allowed disabled:bg-gray-400">
+            {
+                isSubmitting && (<Spinner className='w-4 h-4'/>)
+            } Yes, Deactivate it!
         </button>
     </div>
     </>

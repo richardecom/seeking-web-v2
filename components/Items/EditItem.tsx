@@ -15,13 +15,14 @@ import { format } from "date-fns"
 import { cn } from '@/lib/utils';
 import { UpdateItem } from '@/hooks/ItemHook';
 import { GetAllMobileUser, GetAllUserLocations } from '@/hooks/UserHooks';
+import Spinner from '../Shared/Spinner';
 
 const formSchema = z.object({
   user_id: z.number().int().min(1, { message: "Required*" } ),
   location_id: z.number().int().min(1, { message: "Required*" } ),
   item_name: z.string().min(1, { message: "Required*" }),
   description: z.string().min(1, { message: "Required*" }).max(255, { message: "Description must not exceed 255 characters." }),
-  quantity: z.number({message:'Invalid Quantity'}).int({message:'Invalid Quantity'}).min(1, { message: "Required*" }).nonnegative(),
+  quantity: z.number({message:'Invalid Quantity'}).int({message:'Invalid Quantity'}).min(0, { message: "Required*" }).nonnegative(),
   rating: z.number().min(.5, { message: "Required*" }),
 });
 
@@ -39,6 +40,7 @@ const EditItem = ({itemData, onSubmit}) => {
   const [showLocation, setShowLocation] = useState(false);
   const [errors, setErrors] = useState<ItemFormErrors>({});
   const [categoryData, setCategoryData] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const maxLength = 255;
   const [date, setDate] = React.useState<Date>()
@@ -125,6 +127,7 @@ const EditItem = ({itemData, onSubmit}) => {
 
 
   const updateItem = async (event: React.FormEvent<HTMLFormElement>) =>{
+    setIsSubmitting(true)
     event.preventDefault()
     console.log('UPDATED DATA', formData)
     try {
@@ -145,6 +148,8 @@ const EditItem = ({itemData, onSubmit}) => {
         className: 'bg-green-800 text-white border-0',
         description: 'Error creating item data',
       })
+    }finally{
+      setIsSubmitting(false)
     }
     
 
@@ -202,11 +207,12 @@ const EditItem = ({itemData, onSubmit}) => {
       if (locationSearchKey) {
         try {
           const params = { page : 1, limit : 100, searchKey:locationSearchKey, user_id: formData.user_id }
-          console.log(params)
-            const data = await GetAllUserLocations(params);
-            console.log('data.list', data.list)
-            setLocationSuggestions(data.list);
-            setShowLocation(location_id === '' ? data.list.length > 0 : false);
+            const response = await GetAllUserLocations(params);
+            if(response.status === 401){
+              router.push('/')
+            }
+            setLocationSuggestions(response.data.list);
+            setShowLocation(location_id === '' ? response.data.list.length > 0 : false);
         } catch (error) {
           console.error('Error fetching user suggestions:', error);
         }
@@ -511,8 +517,9 @@ const EditItem = ({itemData, onSubmit}) => {
         <div className="flex flex-col sm:flex-row justify-center py-3">
             <button
             type="submit"
-              className="flex justify-center items-center rounded-md bg-[#b00202] px-4 h-9 text-xs leading-4 text-white shadow-sm hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300">
-              Save Changes
+            disabled={isSubmitting}
+              className="flex justify-center items-center rounded-md bg-[#b00202] px-4 h-9 text-xs leading-4 text-white shadow-sm hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed">
+              { isSubmitting && (<Spinner className='w-4 h-4'/>)} Save Changes
             </button>
         </div>
     </form>

@@ -1,3 +1,4 @@
+"use client"
 import { LoginErrors } from '@/app/types/error';
 import { login } from '@/hooks/Auth';
 import { toast } from '@/hooks/use-toast';
@@ -6,6 +7,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import Spinner from '../Shared/Spinner';
 
 export const LoginForm = () => {
   const { login: contextLogin } = useUser();
@@ -16,17 +18,20 @@ export const LoginForm = () => {
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
     email_address: false,
     password: false,
   });
 
   const signIn = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true)
     event.preventDefault();
     try {
       const result = await login(loginForm);
       if(result.status === 201){
         contextLogin(result.data);
+        router.push('/dashboard');
         router.push('/dashboard');
         toast({
           className: 'success_message',
@@ -48,6 +53,9 @@ export const LoginForm = () => {
           email_address: '',
           password: '',
         });
+    }
+    finally {
+      setIsLoading(false);
     }
     
   };
@@ -122,7 +130,7 @@ const togglePasswordVisibility = () => {
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               autoComplete="current-password"
               value={loginForm.password}
@@ -152,8 +160,14 @@ const togglePasswordVisibility = () => {
         <div className='pt-3'>
           <button
             type="submit"
-            className="flex w-full  justify-center rounded-md bg-[#b00202] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition duration-300">
-            Sign in
+            disabled={isLoading}
+            className={`flex bg-[#b00202] w-full items-center  justify-center rounded-md  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:bg-[#b00202] active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out disabled:bg-gray-400`}>
+            {isLoading ? (
+              <><Spinner className='w-4 h-4'/> Signing in...</>
+            ):(
+              <>Sign in</>
+            )
+            } 
           </button>
         </div>
     </form>

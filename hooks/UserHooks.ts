@@ -1,65 +1,92 @@
+import { apiRequest } from "./api";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT
 console.log('API_BASE_URL: ', API_BASE_URL)
 
 
-export const GetAllMobileUser = async (params) => {
-    try {
-        const { limit, page, searchKey } = params;
+// export const GetAllMobileUser = async (params) => {
+//     try {
+//         const { limit, page, searchKey } = params;
 
-        const queryString = new URLSearchParams({
-            limit: limit.toString(),
-            page: page.toString(),
-            searchKey: searchKey.toString(),
-        }).toString();
+//         const queryString = new URLSearchParams({
+//             limit: limit.toString(),
+//             page: page.toString(),
+//             searchKey: searchKey.toString(),
+//         }).toString();
 
-        const result = await fetch(`${API_BASE_URL}user?${queryString}`);
-        if (!result.ok) {
-            throw new Error(`HTTP error! status: ${result.status}`);
-        }
-        const response = await result.json();
-        if (response && response.data) {
-            return response.data;
-        } else {
-            console.error('Unexpected response structure:', response);
-            return [];
-        }
-    } catch (error) {
-      console.error('Error fetching mobile users data:', error);
-      return [];
-    }
-  };
+//         const result = await fetch(`${API_BASE_URL}user?${queryString}`);
+//         if (!result.ok) {
+//             throw new Error(`HTTP error! status: ${result.status}`);
+//         }
+//         const response = await result.json();
+//         if (response && response.data) {
+//             return response.data;
+//         } else {
+//             console.error('Unexpected response structure:', response);
+//             return [];
+//         }
+//     } catch (error) {
+//       console.error('Error fetching mobile users data:', error);
+//       return [];
+//     }
+//   };
+
+  export const GetAllMobileUser = async (params) => {
+    const { limit, page, searchKey } = params;
+    const queryString = new URLSearchParams({
+        limit: limit.toString(),
+        page: page.toString(),
+        searchKey: searchKey.toString(),
+    }).toString();
+    const result = await apiRequest(`user?${queryString}`, 'GET');
+    if(!result){  return []; }
+    return result;
+};
+
+
+//   export const GetAllUserLocations = async (params) => {
+//     try {
+//         console.log('PARAMS: ', params)
+//         const { limit, page, searchKey, user_id } = params;
+//         console.log('PARAMS user_id: ', user_id)
+//         const queryString = new URLSearchParams({
+//             limit: limit.toString(),
+//             page: page.toString(),
+//             searchKey: searchKey.toString(),
+//             user_id: user_id.toString(),
+//         }).toString();
+
+//         console.log('queryString', queryString)
+
+//         const result = await fetch(`${API_BASE_URL}user/location?${queryString}`);
+//         if (!result.ok) {
+//             throw new Error(`HTTP error! status: ${result.status}`);
+//         }
+//         const response = await result.json();
+//         if (response && response.data) {
+//             return response.data;
+//         } else {
+//             console.error('Unexpected response structure:', response);
+//             return [];
+//         }
+//     } catch (error) {
+//       console.error('Error fetching users location data:', error);
+//       return [];
+//     }
+//   };
+
   export const GetAllUserLocations = async (params) => {
-    try {
-        console.log('PARAMS: ', params)
-        const { limit, page, searchKey, user_id } = params;
-        console.log('PARAMS user_id: ', user_id)
-        const queryString = new URLSearchParams({
-            limit: limit.toString(),
-            page: page.toString(),
-            searchKey: searchKey.toString(),
-            user_id: user_id.toString(),
-        }).toString();
-
-        console.log('queryString', queryString)
-
-        const result = await fetch(`${API_BASE_URL}user/location?${queryString}`);
-        if (!result.ok) {
-            throw new Error(`HTTP error! status: ${result.status}`);
-        }
-        const response = await result.json();
-        if (response && response.data) {
-            return response.data;
-        } else {
-            console.error('Unexpected response structure:', response);
-            return [];
-        }
-    } catch (error) {
-      console.error('Error fetching users location data:', error);
-      return [];
-    }
-  };
-
-  
+    const { limit, page, searchKey, user_id } = params;
+    const queryString = new URLSearchParams({
+        limit: limit.toString(),
+        page: page.toString(),
+        searchKey: searchKey.toString(),
+        user_id: user_id.toString(),
+    }).toString();
+    const result = await apiRequest(`user/location?${queryString}`, 'GET');
+    if(!result){  return []; }
+    return result;
+};
 
   export const GetAllUsers = async (params) => {
     

@@ -7,6 +7,7 @@ import { LocationFormErrors } from "@/app/types/error";
 import { useToast } from "@/hooks/use-toast"
 import { Location } from "@/app/types/location";
 import { useRouter } from "next/navigation";
+import Spinner from "../Shared/Spinner";
 
 const formSchema = z.object({
     user_id: z
@@ -33,6 +34,7 @@ const EditLocation = ({ locationData, onSubmit }) => {
   const [user_id, setUserId] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<LocationFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const maxLength = 255;
 
   const [formData, setFormData] = useState({ 
@@ -80,6 +82,7 @@ const selectMUser = (value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
   const submitUpdate = async (event) => {
+    setIsSubmitting(true)
     event.preventDefault()
     try {
       const result = await UpdateLocation(formData);
@@ -110,6 +113,8 @@ const selectMUser = (value) => {
         className: 'error_message',
         description: 'Error creating location data',
       })
+    }finally{
+      setIsSubmitting(false);
     }
   }
 
@@ -117,9 +122,12 @@ const selectMUser = (value) => {
     const fetchMobileUsers = async () => {
       if (searchKey) {
         try {
-            const data = await GetAllMobileUser({ page : 1, limit : 100, searchKey });
-            setFilteredSuggestions(data.list);
-            setShowSuggestions(user_id === '' ? data.list.length > 0 : false);
+            const response = await GetAllMobileUser({ page : 1, limit : 100, searchKey });
+            if(response.status === 401){
+              router.push('/')
+            }
+            setFilteredSuggestions(response.data.list);
+            setShowSuggestions(user_id === '' ? response.data.list.length > 0 : false);
         } catch (error) {
           console.error('Error fetching user suggestions:', error);
         }
@@ -295,8 +303,9 @@ useEffect(() => {
         <div className="flex flex-col sm:flex-row justify-center py-3">
             <button
             type="submit"
-              className="flex justify-center items-center rounded-md bg-[#b00202] px-4 h-9 text-xs leading-4 text-white shadow-sm hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300">
-              Save Changes
+            disabled={isSubmitting}
+              className="flex justify-center items-center rounded-md bg-[#b00202] px-4 h-9 text-xs leading-4 text-white shadow-sm hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed">
+              {isSubmitting && (<Spinner className="w-4 h-4"/>) } Save Changes
             </button>
         </div>
     </form>

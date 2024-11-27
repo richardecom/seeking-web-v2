@@ -45,6 +45,7 @@ const ChangePassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -101,6 +102,7 @@ const ChangePassword = () => {
 
   const updatePassword = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
+      setIsLoading(true)
       event.preventDefault();
       try {
         const result = await UpdateProfile(formData, 'password');
@@ -129,6 +131,8 @@ const ChangePassword = () => {
           className: "error_message",
           description: "An error occurred while updating your password.",
         });
+      } finally{
+        setIsLoading(false)
       }
     },
     [formData]
@@ -261,7 +265,7 @@ const ChangePassword = () => {
         </div>
         {/* Submit Button */}
         <div className="flex justify-end">
-          <SubmitButton buttonName="Save Changes" isFormValid={isFormValid} />
+          <SubmitButton buttonName="Save Changes" isFormValid={isFormValid} isLoading={isLoading}/>
         </div>
       </form>
     </CardLayout>

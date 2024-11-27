@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     User.hasMany(Location, { foreignKey: "user_id" });
     Location.belongsTo(User, { foreignKey: "user_id" });
 
-    const response = await Location.findAll({
+    const { count, rows } = await Location.findAndCountAll({
       where: whereClause,
       limit: query.limit,
       offset: offset,
@@ -111,12 +111,13 @@ export async function GET(req: NextRequest) {
         ],
       },
     });
-    const total = await Location.count({ where: whereClause });
+    // const total = await Location.count({ where: whereClause });
+    const total = count;
     const pages = Math.ceil(total / query.limit);
 
     const before = query.page > 1 ? +query.page - 1 : 1;
     const next = query.page < pages ? +query.page + 1 : pages;
-    const list = response.map((item, index) => ({
+    const list = rows.map((item, index) => ({
       number: (query.page - 1) * query.limit + index + 1,
       selected: true,
       ...item.dataValues,

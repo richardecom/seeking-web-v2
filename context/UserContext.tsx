@@ -1,4 +1,5 @@
 // /context/UserContext.tsx
+"use client"
 import { User } from '@/app/types/user';
 import { UpdateProfile } from '@/hooks/ProfileHooks';
 import { toast } from '@/hooks/use-toast';
@@ -64,31 +65,32 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const updateBasic = async (formData: any, option: string) => {
-        if (!currentUser) return;
-        try {
+        // if (!currentUser) return;
+        // try {
             
-            const result = await UpdateProfile(formData, option);
-            if (result.status === 201) {
-                login(result.data)
-                toast({
-                    className: "success_message",
-                    description: result.message,
-                });
-            } else if (result.status === 401) {
-                logout();
-                router.push("/");
-            } else {
-                toast({
-                    className: "error_message",
-                    description: result.message,
-                });
-            }
-        } catch (error) {
-            toast({
-                className: "error_message",
-                description: "An unexpected error occurred. Please try again later.",
-            });
-        }
+        //     const result = await UpdateProfile(formData, option);
+
+        //     console.log("RESULT, 0", result)
+        //     if (result.status === 201) {
+        //         login(result.data)
+        //         toast({
+        //             className: "success_message",
+        //             description: result.message,
+        //         });
+        //     } else if (result.status === 401) {
+        //         router.push("/");
+        //     } else {
+        //         toast({
+        //             className: "error_message",
+        //             description: result.message,
+        //         });
+        //     }
+        // } catch (error) {
+        //     toast({
+        //         className: "error_message",
+        //         description: "An unexpected error occurred. Please try again later.",
+        //     });
+        // }
     };
 
     return (

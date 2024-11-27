@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useCallback, useEffect, useState } from "react";
 import Search from "./Search";
 import Paginator from "@/components/Shared/Paginator";
@@ -38,6 +40,16 @@ import EditItem from "@/components/Items/EditItem";
 import ViewItemData from "@/components/Items/ViewItemData";
 import EditLocation from "@/components/Location/EditLocation";
 import DeleteLocation from "@/components/Location/DeleteLocation";
+// import DeleteDialog from "@/components/Items/DeleteDialog";
+import dynamic from "next/dynamic";
+import ViewButton from "@/components/Shared/ViewButton";
+
+const DeleteDialog = dynamic(() => import("@/components/Items/DeleteDialog"));
+const ViewDialog = dynamic(() => import("@/components/Items/ViewDialog"));
+const EditDialog = dynamic(() => import("@/components/Items/EditDialog"));
+const EditLocationDialog = dynamic(() => import("@/components/Location/EditDialog"));
+const DeleteLocationDialog = dynamic(() => import("@/components/Location/Delete"));
+const ViewLocationDialog = dynamic(() => import("@/components/Location/ViewDialog"));
 
 const LocationItemData = ({ user_id }) => {
   const router = useRouter();
@@ -55,6 +67,7 @@ const LocationItemData = ({ user_id }) => {
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [editLocDialog, setEditLocationDialog] = useState(false);
   const [deleteLocation, setDeleteLocation] = useState(false);
+  const [viewLocation, setViewLocation] = useState(false);
   const [editDialog, setEditDialog] = useState(false);
   const [item, setItem] = useState({});
   const [location, setLocation] = useState({});
@@ -75,12 +88,14 @@ const LocationItemData = ({ user_id }) => {
   const handleClose = (item, page) => {
     setDeleteDialog(false);
     setEditDialog(false);
+    setViewDialog(false);
     fetchLocationItems(item.location_id, page);
   };
 
   const handleCloseLocation = () => {
     setEditLocationDialog(false);
     setDeleteLocation(false);
+    setViewLocation(false);
     fetchUserLocation();
   };
 
@@ -270,13 +285,21 @@ const LocationItemData = ({ user_id }) => {
                     </AccordionTrigger>
                   </div>
                   <div className="button-area flex mt-2 px-1">
+                  <ViewButton
+                      onClick={() => {
+                        setViewLocation(true);
+                        setLocation(location);
+                      }}
+                      disabled={false}
+                      hidden={false}
+                    />
                     <EditButton
                       onClick={() => {
                         setEditLocationDialog(true);
                         setLocation(location);
                       }}
                       disabled={false}
-                      hidden={false}
+                      hidden={location.status !== 'Active'}
                     />
                     <DeleteButton
                       onClick={() => {
@@ -284,8 +307,10 @@ const LocationItemData = ({ user_id }) => {
                         setLocation(location);
                       }}
                       disabled={false}
-                      hidden={false}
+                      hidden={location.status !== 'Active'}
                     />
+
+                    
                   </div>
                 </div>
 
@@ -472,8 +497,8 @@ const LocationItemData = ({ user_id }) => {
                                       .currentPage
                                   );
                                 }}
-                                disabled={false}
-                                hidden={false}
+                                disabled={item.status !== 'Active'}
+                                hidden={item.status !== 'Active'}
                               />
                               <DeleteButton
                                 onClick={() => {
@@ -485,7 +510,7 @@ const LocationItemData = ({ user_id }) => {
                                   );
                                 }}
                                 disabled={item.status !== "Active"}
-                                hidden={false}
+                                hidden={item.status !== 'Active'}
                               />
                             </div>
                           </div>
@@ -506,7 +531,13 @@ const LocationItemData = ({ user_id }) => {
         </Accordion>
       </div>
 
-      <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
+      <ViewDialog isOpen={viewDialog} onClose={handleClose} item={item}/>
+      <EditDialog isOpen={editDialog} onClose={handleClose} item={item}/>
+      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} item={item}/>
+      <DeleteLocationDialog isOpen={deleteLocation} onClose={handleCloseLocation} location={location}/>
+      <EditLocationDialog isOpen={editLocDialog} onClose={handleCloseLocation} location={location}/>
+      <ViewLocationDialog isOpen={viewLocation} onClose={handleCloseLocation} location={location}/>
+      {/* <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
         <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">
           <DialogHeader>
             <DialogTitle>Confirm</DialogTitle>
@@ -523,9 +554,11 @@ const LocationItemData = ({ user_id }) => {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
-      <Dialog open={editDialog} onOpenChange={setEditDialog}>
+      
+
+      {/* <Dialog open={editDialog} onOpenChange={setEditDialog}>
         <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit Item</DialogTitle>
@@ -540,9 +573,9 @@ const LocationItemData = ({ user_id }) => {
             />
           </FormLayout>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
-      <Dialog open={editLocDialog} onOpenChange={setEditLocationDialog}>
+      {/* <Dialog open={editLocDialog} onOpenChange={setEditLocationDialog}>
         <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit Location</DialogTitle>
@@ -557,8 +590,9 @@ const LocationItemData = ({ user_id }) => {
             />
           </FormLayout>
         </DialogContent>
-      </Dialog>
-      <Dialog open={deleteLocation} onOpenChange={setDeleteLocation}>
+      </Dialog> */}
+
+      {/* <Dialog open={deleteLocation} onOpenChange={setDeleteLocation}>
         <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">
           <DialogHeader>
             <DialogTitle>Confirm</DialogTitle>
@@ -572,10 +606,10 @@ const LocationItemData = ({ user_id }) => {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
 
-      <Dialog open={viewDialog} onOpenChange={setViewDialog}>
+      {/* <Dialog open={viewDialog} onOpenChange={setViewDialog}>
         <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex items-center">
@@ -592,7 +626,7 @@ const LocationItemData = ({ user_id }) => {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };

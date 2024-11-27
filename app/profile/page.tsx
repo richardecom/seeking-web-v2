@@ -1,7 +1,4 @@
-import DashboardCount from '@/components/Dashboard/DashboardCount'
 import DashboardWrap from '@/components/Dashboard/DashboardWrap'
-import RecentItems from '@/components/Dashboard/RecentItems'
-import RecentLocation from '@/components/Dashboard/RecentLocation'
 import { DefaultLayout } from '@/components/Layouts/DefaultLayout'
 import ChangeBasicInfo from '@/components/Profile/ChangeBasicInfo'
 import ChangeEmail from '@/components/Profile/ChangeEmail'

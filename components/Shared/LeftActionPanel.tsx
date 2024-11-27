@@ -4,7 +4,7 @@ import React from 'react'
 
 const LeftActionPanel = ({children}:any) => {
   return (
-    <div className='md:w-full md:flex lg:w-[70%]'>
+    <div className='md:w-full md:flex lg:w-[70%] items-center'>
         {children}
     </div>
   )

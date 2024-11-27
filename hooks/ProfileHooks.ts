@@ -6,6 +6,9 @@ export const UpdateProfile = async (formData, option) => {
             body: option === 'basic' ? formData: JSON.stringify(formData) ,
         });
         if (!response.ok) {
+            if(response.status === 401){
+                return { status: response.status, message: 'Unauthorized' }
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return await response.json();

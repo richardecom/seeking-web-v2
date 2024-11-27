@@ -10,6 +10,7 @@ import TitleDescWrap from "./TitleDescWrap";
 import Description from "./Description";
 import Title from "./Title";
 import Footer from "./Footer";
+import Spinner from "../Shared/Spinner";
 
 export const ForgotPasswordForm = () => {
   const formSchema = z.object({
@@ -135,13 +136,16 @@ export const ForgotPasswordForm = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm ${
-                    isSubmitting
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-[#b00202] hover:bg-[#800000]"
-                  } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition duration-300`}
-                >
-                  {isSubmitting ? "Requesting for OTP" : "Submit"}
+                  aria-busy={isSubmitting}
+                  aria-label={isSubmitting ? "Requesting OTP..." : "Submit"}
+                  className={`flex w-full bg-[#b00202] items-center justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:bg-[#b00202] active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed`}>
+                  {isSubmitting ? (
+                    <>
+                      <Spinner className="w-5 h-5 mr-2" />{" "} Requesting OTP...
+                    </>
+                  ) : (
+                    <>Submit</>
+                  )}
                 </button>
               </div>
             </form>

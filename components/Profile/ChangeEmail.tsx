@@ -66,7 +66,7 @@ const ChangeEmail = () => {
     otp: false,
   });
   const [isFormValid, setIsFormValid] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const formSchema = z.object({
     new_email: z
         .string()
@@ -156,6 +156,7 @@ const ChangeEmail = () => {
   // Handle form submission
   const updateEmail = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
+      setIsLoading(true)
       event.preventDefault();
       try {
         console.log('FORMDATA: ', formData)
@@ -166,6 +167,8 @@ const ChangeEmail = () => {
           className: "error_message",
           description: "An error occurred while updating your email.",
         });
+      } finally{
+        setIsLoading(false)
       }
     },
     [formData]
@@ -244,7 +247,7 @@ const ChangeEmail = () => {
         </div>
 
         <div className="flex justify-end">
-          <SubmitButton buttonName="Save Changes" isFormValid={isFormValid} />
+          <SubmitButton buttonName="Save Changes" isFormValid={isFormValid} isLoading={isLoading}/>
         </div>
       </form>
     </CardLayout>

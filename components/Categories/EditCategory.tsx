@@ -6,11 +6,13 @@ import { GetAllMobileUser } from '@/hooks/UserHooks';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react'
 import { z } from 'zod';
+import Spinner from '../Shared/Spinner';
 
 const EditCategory = ({ editCatData, onSubmit }) => {
 
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<CategoryFormErrors>({});
   const [searchKey, setSearchKey] = useState('');
   const [user_id, setUserId] = useState(null);
@@ -76,6 +78,7 @@ const EditCategory = ({ editCatData, onSubmit }) => {
 };
 
   const updateCategory = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsSubmitting(true)
     event.preventDefault()
     console.log('formData', formData)
     try {
@@ -95,6 +98,8 @@ const EditCategory = ({ editCatData, onSubmit }) => {
             className: 'error_message',
             description: 'Error creating category data',
         })
+    } finally{
+      setIsSubmitting(false)
     }
 }
 
@@ -115,9 +120,12 @@ const EditCategory = ({ editCatData, onSubmit }) => {
     const fetchMobileUsers = async () => {
         if (searchKey) {
             try {
-                const data = await GetAllMobileUser({ page: 1, limit: 100, searchKey });
-                setFilteredSuggestions(data.list);
-                setShowSuggestions(user_id === '' ? data.list.length > 0 : false);
+                const response = await GetAllMobileUser({ page: 1, limit: 100, searchKey });
+                if(response.status === 401){
+                  router.push('/')
+                }
+                setFilteredSuggestions(response.data.list);
+                setShowSuggestions(user_id === '' ? response.data.list.length > 0 : false);
             } catch (error) {
                 console.error('Error fetching user suggestions:', error);
             }
@@ -268,9 +276,11 @@ useEffect(() => {
       <div className="flex flex-col sm:flex-row justify-center py-3">
         <button
           type="submit"
-          disabled={!isFormValid}
-          className={`flex justify-center items-center rounded-md px-4 h-9 text-xs leading-4 shadow-sm ${!isFormValid ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-[#b00202] text-white hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300'}`}>
-          Save Changes
+          disabled={!isFormValid || isSubmitting}
+          className={`flex justify-center items-center rounded-md px-4 h-9 text-xs leading-4 shadow-sm ${(!isFormValid || isSubmitting )? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-[#b00202] text-white hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300'}`}>
+          {
+            isSubmitting && (<Spinner className='w-4 h-4'/>) 
+          } Save Changes
         </button>
       </div>
     </form>

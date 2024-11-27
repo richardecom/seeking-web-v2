@@ -9,7 +9,7 @@ const AdminProfile = ({ user }) => {
     <div className="w-full">
       <div className="flex items-center mb-2 ">
         <div className="cursor-pointer">
-          <ArrowLeft onClick={() => router.push("/users")} />
+          <ArrowLeft onClick={() => router.push("/user-list")} />
         </div>
         <Image
           width={40}
