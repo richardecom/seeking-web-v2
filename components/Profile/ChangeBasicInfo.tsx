@@ -16,6 +16,8 @@ import { z } from "zod";
 import SubmitButton from "../Shared/SubmitButton";
 import { useRouter } from "next/navigation";
 import { UpdateProfile } from "@/hooks/ProfileHooks";
+import { DatePicker } from "../ui/date-picker";
+import { BirthDatePicker } from "../ui/birth-date-picker";
 
 interface FormData {
   user_id: number | null;
@@ -34,7 +36,7 @@ const ChangeBasicInfo = () => {
     name: "",
     address: "",
     image: null,
-    dob: null,
+    dob: "",
   }
   const [formData, setFormData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -55,7 +57,7 @@ const ChangeBasicInfo = () => {
         name: currentUser.name || "",
         address: currentUser.address || "",
         image: null,
-        dob: currentUser.dob || null,
+        dob: currentUser.dob,
       });
     }
   }, [currentUser]);
@@ -152,7 +154,6 @@ const ChangeBasicInfo = () => {
   return (
     <CardLayout cardTitle={"Change Basic Information"}>
       <form onSubmit={updateBasicInfo}>
-        {/* Name Field */}
         <div className="form-input mb-3">
           <input
             id="name"
@@ -168,7 +169,6 @@ const ChangeBasicInfo = () => {
           {errors.name && <p className="text-red-500 text-xs font-normal py-1">{errors.name}</p>}
         </div>
 
-        {/* Address Field */}
         <div className="form-input mb-3">
           <input
             id="address"
@@ -184,41 +184,19 @@ const ChangeBasicInfo = () => {
           {errors.address && <p className="text-red-500 text-xs font-normal py-1">{errors.address}</p>}
         </div>
 
-        {/* Date of Birth Picker */}
         <div className="form-input mb-3">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                onClick={()=>{}}
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !formData.dob && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData.dob ? format(new Date(formData.dob), "PPP") : <span>Date of Birth</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={formData.dob ? new Date(formData.dob) : undefined}
-                onSelect={(date) => {
-                  if (date) {
-                    const updatedDate = new Date(date);
-                    updatedDate.setHours(updatedDate.getHours() + 8);
-                    const utcDateOnly = updatedDate.toISOString().split("T")[0];
-                    setFormData({ ...formData, dob: utcDateOnly });
-                  }
-                }}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <BirthDatePicker onSelect={
+            (selectedDate) => {
+              if (selectedDate) {
+                const updatedDate = new Date(selectedDate);
+                updatedDate.setHours(updatedDate.getHours() + 8);
+                const utcDateOnly = updatedDate.toISOString().split("T")[0];
+                setFormData({ ...formData, dob: utcDateOnly });
+              }
+              }
+          } defaultDate = {formData?.dob ? new Date(formData?.dob) : new Date()}/>
         </div>
 
-        {/* Image Upload */}
         <div className="form-input mb-3">
           <Input
             type="file"
@@ -228,7 +206,6 @@ const ChangeBasicInfo = () => {
           />
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end">
           <SubmitButton buttonName="Save Changes" isFormValid={isFormValid} isLoading={isLoading}/>
         </div>

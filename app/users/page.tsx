@@ -4,6 +4,7 @@ import { MapPin } from 'lucide-react';
 import React from 'react';
 import TableLayout from '@/components/Shared/TableLayout';
 import UserDataTable from '../../components/User/UserDataTable';
+import { LSFilterProvider } from '@/context/FilterContext';
 
 
 const UserPage = () => {
@@ -11,7 +12,9 @@ const UserPage = () => {
     <DefaultLayout>
         <ContentTitle title="User List" icon={<MapPin />} />
         <TableLayout>
-            <UserDataTable/>
+        <LSFilterProvider>
+          <UserDataTable/>
+        </LSFilterProvider>
         </TableLayout>
     </DefaultLayout>
   );

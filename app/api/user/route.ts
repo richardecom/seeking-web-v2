@@ -46,6 +46,7 @@ export async function GET(req: NextRequest){
             }
         }
 
+        console.log("QUERY: ", query)
         const offset = (query.page - 1) * query.limit;
         const {count, rows} = await User.findAndCountAll({
             where: whereClause,

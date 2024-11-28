@@ -11,7 +11,6 @@ import LeftActionPanel from "@/components/Shared/LeftActionPanel";
 import SelectToSearch from "@/components/Shared/SelectToSearch";
 import TypeToSearch from "@/components/Shared/TypeToSearch";
 import RightActionPanel from "@/components/Shared/RightActionPanel";
-// import DownloadToCsv from "@/components/Shared/DownloadToCsv";
 import Paginator from "@/components/Shared/Paginator";
 import TableSkeleton from "@/components/Skeleton/TableSkeleton";
 import { toast } from "@/hooks/use-toast";
@@ -22,22 +21,21 @@ import ViewButton from "@/components/Shared/ViewButton";
 import EditButton from "@/components/Shared/EditButton";
 import DeleteButton from "@/components/Shared/DeleteButton";
 import { NoDataFound } from "@/components/Shared/NoDataFound";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import FormLayout from "@/components/Shared/FormLayout";
-// import EditUser from "@/components/User/EditUser";
-// import DeleteUser from "@/components/User/DeleteUser";
 import { AddSystemUser } from "./AddSystemUser";
 import dynamic from "next/dynamic";
-import DeleteDialog from "./DeleteDialog";
-import EditDialog from "./EditDialog";
 import Link from "next/link";
+import { useFilters } from "@/context/FilterContext";
 
-const EditUser = dynamic(() => import("@/components/User/EditUser"));
-const DeleteUser = dynamic(() => import("@/components/User/DeleteUser"));
 const DownloadToCsv = dynamic(() => import("@/components/Shared/DownloadToCsv"));
+const DeleteDialog = dynamic(() => import("@/components/User/DeleteDialog"));
+const EditDialog = dynamic(() => import("@/components/User/EditDialog"));
+const ViewSystemUserDialog = dynamic(() => import("@/components/User/View/ViewSystemUserDialog"));
 
 const UserDataTable = () => {
   const { currentUser } = useUser();
+  const { filters } = useFilters();
+  
+  console.log("HERWES" , filters)
   const headers = [
     "Email Address",
     "Name",
@@ -73,13 +71,6 @@ const UserDataTable = () => {
     { key: 1, value: "Premium" },
     { key: 0, value: "Free" },
   ];
-  const savedFilters = localStorage.getItem("userFilters");
-  const initialFilters = savedFilters ? JSON.parse(savedFilters) : {};
-  const [page, setPage] = useState<number>(initialFilters.page || 1);
-  const [searchKey, setSearchKey] = useState<string>(initialFilters.searchKey || "");
-  const [status, setStatus] = useState<string>(initialFilters.status || "");
-  const [userRole, setUserRole] = useState<string>(initialFilters.userRole || "0");
-  const [userType, setUserType] = useState<string>(initialFilters.userType || "");
 
 
   const [isDownloading, setIsDownloading] = useState(false);
@@ -89,7 +80,12 @@ const UserDataTable = () => {
   const [selectedUser, setSelectedUser] = useState({});
   const [exportData, setExportData] = useState<Category[]>([]);
   const [limit] = useState(20);
-  const [progress, setProgress] = useState(1);
+
+  const [page, setPage] = useState(filters.page);
+  const [searchKey, setSearchKey] = useState(filters.searchKey);
+  const [status, setStatus] = useState(filters.status);
+  const [userType, setUserType] = useState(filters.userType);
+  const [userRole, setUserRole] = useState(filters.userRole);
 
   // const [page, setPage] = useState(1);
   // const [searchKey, setSearchKey] = useState("");
@@ -97,8 +93,6 @@ const UserDataTable = () => {
   // const [userType, setUserType] = useState("");
   // const [userRole, setUserRole] = useState("0");
   
-  const [firstReload, setFirstReload] = useState(true);
-  const [dialog, setDialog] = useState(false);
   const router = useRouter();
   const csvLinkRef = useRef(null);
   const [excludeIds, setExcludeIds] = useState([]);
@@ -108,7 +102,6 @@ const UserDataTable = () => {
   const [editDialog, setEditDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [filter, saveFilter] = useState(true);
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
     pages: 0,
@@ -116,16 +109,19 @@ const UserDataTable = () => {
     next: null,
   });
 
-  // const viewUser = (user: any) => {
-  //   router.push(`/users/${user.user_id}`);
-  // };
 
   const handleClose = () => {
+    setEditDialog(false);
+    setDeleteDialog(false);
+    setViewDialog(false);
+  };
+
+  const handleSubmit = () => {
     fetchUserData()
     setEditDialog(false);
     setDeleteDialog(false);
-    // onClose();
-  };
+    setViewDialog(false);
+  }
 
   const downloadCsvFile = async () => {
     if (user_list.length > 0 || excludeIds.length !== pagination.total) {
@@ -266,39 +262,16 @@ const UserDataTable = () => {
     setAllSelected(allChecked);
   }, [user_list]);
 
-  //fetch the saved filters
-  // useEffect(() => {
-  //   const savedFilters = localStorage.getItem("userFilters");
-  //   console.log("SAVE FILTERS", savedFilters)
-  //   if (savedFilters) {
-  //     const { page, searchKey, status, userRole, userType } = JSON.parse(savedFilters);
-  //   console.log("SAVE page", page)
-  //   console.log("SAVE searchKey", searchKey)
-  //   console.log("SAVE status", userRole)
-  //   console.log("SAVE userType", userType)
-  //   console.log("SAVE FILTERS", savedFilters)
-
-  //     setPage(page);
-  //     setSearchKey(searchKey);
-  //     setStatus(status);
-  //     setUserRole(userRole);
-  //     setUserType(userType);
-  //   }
-  // }, []);
-
-  //save the filters
-
-  
   useEffect(() => {
-      const filters = { page, searchKey, status, userRole, userType };
-      localStorage.setItem("userFilters", JSON.stringify(filters));
-  }, [page, searchKey, status, userRole, userType]);
+    const filters = { page, searchKey, status, userRole, userType };
+    sessionStorage.setItem("userFilters", JSON.stringify(filters));
+  }, [page, limit, searchKey, status, userRole, userType]);
 
   return (
     <div>
       <ActionsToolbar>
         <LeftActionPanel>
-          <AddSystemUser onAfterSubmit={() => {}} />
+          <AddSystemUser onAfterSubmit={handleClose} />
           <SelectToSearch
             hidden={currentUser?.role_code !== "super_admin"}
             arrObj={selectRoleValue}
@@ -307,7 +280,8 @@ const UserDataTable = () => {
             id="user_role"
             value={userRole}
             onSelect={(event) => {
-              console.log(event);
+              // console.log(event);
+              
               const value = event.target.value;
               setUserRole(value);
               setPage(1);
@@ -324,6 +298,7 @@ const UserDataTable = () => {
             arrObj={selectAccountType}
             isDisabled={false}
             onSelect={(event) => {
+             
               const value = event.target.value;
               if (value !== "") {
                 setUserRole("0");
@@ -340,6 +315,7 @@ const UserDataTable = () => {
             id="status"
             value={status}
             onSelect={(event) => {
+              
               setStatus(event.target.value);
               setPage(1);
             }}
@@ -350,7 +326,8 @@ const UserDataTable = () => {
             isSearching={isSearching}
             initVal = {searchKey}
             onClick={(query) => {
-              if (query) {
+              
+              if (query && searchKey !== query) {
                 setIsSearching(true);
               }
               setSearchKey(query);
@@ -481,14 +458,23 @@ const UserDataTable = () => {
                               disabled={false}
                               hidden={false}
                             /> */}
-
-                            <Link href={`users/${user.user_id}`}>
-                              <ViewButton
-                                onClick={() => {}}
-                                disabled={false}
-                                hidden={false}
-                              />
-                            </Link>
+                            {
+                              user.role_code === 'admin' ? (
+                                <ViewButton
+                                  onClick={() => ActionButtonClicked(user, "view")}
+                                  disabled={false}
+                                  hidden={false}
+                                />
+                              ) : (
+                                <Link href={`users/${user.user_id}`}>
+                                <ViewButton
+                                  onClick={() => {}}
+                                  disabled={false}
+                                  hidden={false}
+                                />
+                              </Link>
+                              )
+                            }
                             <EditButton
                               onClick={() => ActionButtonClicked(user, "edit")}
                               disabled={
@@ -523,8 +509,9 @@ const UserDataTable = () => {
         </>
       )}
 
-      <EditDialog isOpen={editDialog} onClose={handleClose} user={selectedUser}/>
-      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} user={selectedUser}/>
+      <EditDialog isOpen={editDialog} onClose={handleClose} user={selectedUser} onSubmit={handleSubmit}/>
+      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} user={selectedUser} onSubmit={handleSubmit}/>
+      <ViewSystemUserDialog isOpen={viewDialog} onClose={() => setViewDialog(false)} user={selectedUser}/>
     </div>
   );
 };

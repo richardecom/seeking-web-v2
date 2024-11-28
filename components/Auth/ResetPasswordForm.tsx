@@ -175,7 +175,7 @@ const ResetPasswordForm = ({ email_address }) => {
                     const password = GenerateRandomPassword();
                     setFormData({ ...formData, password });
                   }}
-                  className="ml-2 bg-gray-900 text-white h-9 rounded-md w-[100px] px-3 py-1 text-xs font-normal hover:bg-gray-700 transition duration-300"
+                  className="ml-2 bg-gray-900 text-white h-9 rounded-md w-[100px] px-3 py-1 text-xs font-normal hover:bg-gray-700 transition duration-300 active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out transition duration-300"
                 >
                   Generate
                 </button>

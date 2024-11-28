@@ -99,7 +99,12 @@ const LocationDataTable = () => {
     next: null,
   });
 
-  const handleClose = (val:string) => {
+  const handleClose = () => {
+    setDialogOpen(false);
+    setDeleteDialog(false);
+    setViewDialog(false);
+  };
+  const handleSubmit = () => {
     fetchLocationData();
     setDialogOpen(false);
     setDeleteDialog(false);
@@ -459,8 +464,8 @@ const LocationDataTable = () => {
         </DialogContent>
       </Dialog> */}
       <ViewDialog isOpen={viewDialog} onClose={handleClose} location={selected}/>
-      <EditDialog isOpen={dialogOpen} onClose={handleClose} location={selected}/>
-      <Delete isOpen={deleteDialog} onClose={handleClose} location={selected}/>
+      <EditDialog isOpen={dialogOpen} onClose={handleClose} location={selected} onSubmit = {handleSubmit}/>
+      <Delete isOpen={deleteDialog} onClose={handleClose} location={selected}  onSubmit = {handleSubmit}/>
     </div>
   );
 };

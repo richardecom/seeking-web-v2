@@ -4,7 +4,7 @@ import {Search} from 'lucide-react'
 import Spinner from './Spinner';
 const TypeToSearch = ({onClick, id, name, isSearching, initVal}) => {
     
-    const [searchQuery, setSearchQuery] = useState(initVal || '');
+    const [searchQuery, setSearchQuery] = useState(initVal);
     const [lastSearch, setLastSearch] = useState('');
     const applySearch = () => {
         if(lastSearch !== searchQuery){

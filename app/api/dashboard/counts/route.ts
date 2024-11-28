@@ -29,12 +29,12 @@ export async function GET(request: NextRequest) {
     const lastMonthStart = addHours(startOfMonth(subMonths(currentDate, 1)), timeOffset);
     const lastMonthEnd = addHours(endOfMonth(lastMonthStart), timeOffset);
 
-    console.log("currentDate", currentDate);
-    console.log("timeOffset", timeOffset);
-    console.log("currentMonthStart", currentMonthStart);
-    console.log("currentMonthEnd", currentMonthEnd);
-    console.log("lastMonthStart", lastMonthStart);
-    console.log("lastMonthEnd", lastMonthEnd);
+    // console.log("currentDate", currentDate);
+    // console.log("timeOffset", timeOffset);
+    // console.log("currentMonthStart", currentMonthStart);
+    // console.log("currentMonthEnd", currentMonthEnd);
+    // console.log("lastMonthStart", lastMonthStart);
+    // console.log("lastMonthEnd", lastMonthEnd);
 
     const [overallLocations, lastTotalLocations, currTotalLocations] =
       await Promise.all([

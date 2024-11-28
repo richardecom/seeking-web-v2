@@ -254,8 +254,14 @@ export const CategoryDataTable = () => {
     setPage(1);
   };
 
-  const handleClose = () => {
+  const handleSubmit = () => {
     fetchCategory()
+    setEditDialog(false);
+    setDeleteDialog(false);
+    setViewDialog(false);
+  };
+
+  const handleClose = () => {
     setEditDialog(false);
     setDeleteDialog(false);
     setViewDialog(false);
@@ -439,8 +445,8 @@ export const CategoryDataTable = () => {
       
 
       <ViewDialog isOpen={viewDialog} onClose={handleClose} category={category}/>
-      <EditDialog isOpen={editDialog} onClose={handleClose} category={category}/>
-      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} category={category}/>
+      <EditDialog isOpen={editDialog} onClose={handleClose} category={category} onSubmit={handleSubmit}/>
+      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} category={category} onSubmit={handleSubmit}/>
     </div>
   );
 };

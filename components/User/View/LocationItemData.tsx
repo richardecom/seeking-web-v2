@@ -85,14 +85,26 @@ const LocationItemData = ({ user_id }) => {
     before: null,
     next: null,
   });
-  const handleClose = (item, page) => {
+  const handleSubmit = (item, page) => {
     setDeleteDialog(false);
     setEditDialog(false);
     setViewDialog(false);
     fetchLocationItems(item.location_id, page);
   };
 
+  const handleClose = (item, page) => {
+    setDeleteDialog(false);
+    setEditDialog(false);
+    setViewDialog(false);
+  };
+
   const handleCloseLocation = () => {
+    setDeleteLocation(false);
+    setViewLocation(false);
+    fetchUserLocation();
+  };
+
+  const handleSubmitLocation = () => {
     setEditLocationDialog(false);
     setDeleteLocation(false);
     setViewLocation(false);
@@ -532,10 +544,10 @@ const LocationItemData = ({ user_id }) => {
       </div>
 
       <ViewDialog isOpen={viewDialog} onClose={handleClose} item={item}/>
-      <EditDialog isOpen={editDialog} onClose={handleClose} item={item}/>
-      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} item={item}/>
-      <DeleteLocationDialog isOpen={deleteLocation} onClose={handleCloseLocation} location={location}/>
-      <EditLocationDialog isOpen={editLocDialog} onClose={handleCloseLocation} location={location}/>
+      <EditDialog isOpen={editDialog} onClose={handleClose} item={item} onSubmit={handleSubmit}/>
+      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} item={item} onSubmit={handleSubmit}/>
+      <DeleteLocationDialog isOpen={deleteLocation} onClose={handleCloseLocation} location={location} onSubmit={handleSubmitLocation}/>
+      <EditLocationDialog isOpen={editLocDialog} onClose={handleCloseLocation} location={location} onSubmit={handleSubmitLocation}/>
       <ViewLocationDialog isOpen={viewLocation} onClose={handleCloseLocation} location={location}/>
       {/* <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
         <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">

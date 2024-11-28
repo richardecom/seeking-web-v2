@@ -14,6 +14,7 @@ import { toast } from '@/hooks/use-toast';
 import { UpdateUser } from '@/hooks/UserHooks';
 import { useRouter } from 'next/navigation';
 import { GetOneTimePin } from '@/hooks/OtpHooks';
+import { BirthDatePicker } from '../ui/birth-date-picker';
 
 const useTimer = (initialTime) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
@@ -374,7 +375,20 @@ const EditUser = ({editUserData, onSubmit}) => {
                   </p>
               )}
           </div>
-          <Popover>
+
+          <BirthDatePicker onSelect={
+            (selectedDate) => {
+              if (selectedDate) {
+                const updatedDate = new Date(selectedDate);
+                updatedDate.setHours(updatedDate.getHours() + 8);
+                const utcDateOnly = updatedDate.toISOString().split("T")[0];
+                setFormData({ ...formData, dob: utcDateOnly });
+              }
+              }
+          } defaultDate = {formData?.dob ? new Date(formData?.dob) : new Date()}/>
+
+
+          {/* <Popover>
           <PopoverTrigger asChild>
               <Button
               onClick={() => {}}
@@ -408,7 +422,7 @@ const EditUser = ({editUserData, onSubmit}) => {
               initialFocus
               />
           </PopoverContent>
-          </Popover>
+          </Popover> */}
       </div>
       <div className="w-full">
         <label
@@ -453,7 +467,7 @@ const EditUser = ({editUserData, onSubmit}) => {
               const password = GenerateRandomPassword();
               setFormData({ ...formData, password: password });
             }}
-            className="ml-2  text-white h-9 rounded-md w-[150px] px-3 py-1 text-xs font-normal bg-gray-900 hover:bg-gray-700 transition duration-300"
+            className="ml-2  text-white h-9 rounded-md w-[150px] px-3 py-1 text-xs font-normal bg-gray-900 hover:bg-gray-700 transition duration-300 active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out transition duration-300"
           >
             Generate
           </button>

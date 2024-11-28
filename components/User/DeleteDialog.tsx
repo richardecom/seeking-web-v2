@@ -2,7 +2,7 @@ import React from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import DeleteUser from './DeleteUser'
 
-const DeleteDialog = ({isOpen, onClose, user}) => {
+const DeleteDialog = ({isOpen, onClose, user, onSubmit}) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">
@@ -12,7 +12,7 @@ const DeleteDialog = ({isOpen, onClose, user}) => {
           </DialogHeader>
           <div className="grid gap-4">
             <div className="h-auto form-body mb-1 w-full scrollbar px-1">
-              <DeleteUser deleteData={user} onSubmit={onClose} />
+              <DeleteUser deleteData={user} onSubmit={onSubmit} />
             </div>
           </div>
         </DialogContent>

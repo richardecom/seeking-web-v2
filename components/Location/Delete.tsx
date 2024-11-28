@@ -2,7 +2,7 @@ import React from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import DeleteLocation from './DeleteLocation'
 
-const Delete = ({ isOpen, onClose, location }) => {
+const Delete = ({ isOpen, onClose, location, onSubmit}) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">
@@ -12,7 +12,7 @@ const Delete = ({ isOpen, onClose, location }) => {
           </DialogHeader>
           <div className="grid gap-4">
             <div className="h-auto form-body mb-1 w-full scrollbar px-1">
-              <DeleteLocation locationData={location} onSubmit={onClose} />
+              <DeleteLocation locationData={location} onSubmit={onSubmit} />
             </div>
           </div>
         </DialogContent>

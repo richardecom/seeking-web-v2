@@ -24,13 +24,6 @@ export async function GET(request) {
     const lastMonthStart = addHours(startOfMonth(subMonths(currentDate, 1)), timeOffset);
     const lastMonthEnd = addHours(endOfMonth(lastMonthStart), timeOffset);
 
-    console.log("currentDate", currentDate);
-    console.log("timeOffset", timeOffset);
-    console.log("currentMonthStart", currentMonthStart);
-    console.log("currentMonthEnd", currentMonthEnd);
-    console.log("lastMonthStart", lastMonthStart);
-    console.log("lastMonthEnd", lastMonthEnd);
-
     const offset = (query.page - 1) * query.limit;
 
     User.hasMany(Item, { foreignKey: "user_id" });
@@ -59,14 +52,14 @@ export async function GET(request) {
         },
       ],
     });
-    const total = await Item.count({ where: whereClause });
-    const pages = Math.ceil(total / query.limit);
+    // const total = await Item.count({ where: whereClause });
+    // const pages = Math.ceil(total / query.limit);
 
-    const before = query.page > 1 ? +query.page - 1 : 1;
-    const next = query.page < pages ? +query.page + 1 : pages;
+    // const before = query.page > 1 ? +query.page - 1 : 1;
+    // const next = query.page < pages ? +query.page + 1 : pages;
 
     const result = {
-      pagination: { total, pages, before, next },
+      // pagination: { total, pages, before, next },
       list: response,
     };
 

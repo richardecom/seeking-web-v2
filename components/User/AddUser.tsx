@@ -14,10 +14,14 @@ import { useRouter } from "next/navigation";
 import { CreateUser } from "@/hooks/UserHooks";
 import { GenerateRandomPassword } from "@/utils/GenerateRandomPassword";
 import { GetOneTimePin } from "@/hooks/OtpHooks";
+import { DatePicker } from "../ui/date-picker";
+import { BirthDatePicker } from "../ui/birth-date-picker";
+import Spinner from "../Shared/Spinner";
 
 const useTimer = (initialTime) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [isActive, setIsActive] = useState(false);
+ 
 
   const startTimer = () => {
     setIsActive(true);
@@ -50,7 +54,7 @@ const AddUser = ({ onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
   const today = new Date().toISOString().split("T")[0];
   const [isFormValid, setIsFormValid] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -119,8 +123,6 @@ const AddUser = ({ onClose }) => {
 
   const { timeLeft, isActive, startTimer } = useTimer(120); // 2 minutes
   const requestOtp = () => {
-    console.log(formData.email_address !== '')
-    console.log(errors.email_address)
     if(formData.email_address !== '' && errors.email_address === undefined){
       if (!isActive) {
         startTimer();
@@ -162,6 +164,7 @@ const AddUser = ({ onClose }) => {
   };
 
   const createUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsSubmitting(true)
     event.preventDefault();
     try {
       const result = await CreateUser(formData);
@@ -185,6 +188,8 @@ const AddUser = ({ onClose }) => {
         className: "error_message",
         description: "Error creating user data",
       });
+    }finally{
+      setIsSubmitting(false)
     }
   };
 
@@ -314,7 +319,17 @@ const AddUser = ({ onClose }) => {
             </p>
           )}
         </div>
-        <Popover>
+        <BirthDatePicker onSelect={
+            (selectedDate) => {
+              if (selectedDate) {
+                const updatedDate = new Date(selectedDate);
+                updatedDate.setHours(updatedDate.getHours() + 8);
+                const utcDateOnly = updatedDate.toISOString().split("T")[0];
+                setFormData({ ...formData, dob: utcDateOnly });
+              }
+              }
+          } defaultDate = {formData?.dob ? new Date(formData?.dob) : new Date()}/>
+        {/* <Popover>
           <PopoverTrigger asChild>
             <Button
               onClick={() => {}}
@@ -350,7 +365,7 @@ const AddUser = ({ onClose }) => {
               initialFocus
             />
           </PopoverContent>
-        </Popover>
+        </Popover> */}
       </div>
       <div className="w-full">
         <label
@@ -396,7 +411,7 @@ const AddUser = ({ onClose }) => {
               const password = GenerateRandomPassword();
               setFormData({ ...formData, password: password });
             }}
-            className="ml-2 text-white h-9 rounded-md w-[150px] px-3 py-1 text-xs font-normal bg-gray-900 hover:bg-gray-700 transition duration-300"
+            className="ml-2 text-white h-9 rounded-md w-[150px] px-3 py-1 text-xs font-normal bg-gray-900 hover:bg-gray-700 transition duration-300 active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out transition duration-300"
           >
             Generate
           </button>
@@ -478,15 +493,16 @@ const AddUser = ({ onClose }) => {
 
       <div className="flex flex-col sm:flex-row justify-center py-3">
         <button
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
           type="submit"
           className={`flex justify-center items-center rounded-md  px-4 h-9 text-xs leading-4 text-white shadow-sm  ${
-            isFormValid
+            (isFormValid || !isSubmitting)
               ? "bg-[#b00202] hover:bg-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 transition duration-300"
               : "bg-gray-400 cursor-not-allowed"
           }`}
         >
-          Create New User
+          
+          {isSubmitting && (<Spinner className="w-4 h-4"/>)} Create New User
         </button>
       </div>
     </form>

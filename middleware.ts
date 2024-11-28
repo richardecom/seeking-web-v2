@@ -24,8 +24,8 @@ const publicRoutes = ["/"];
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
-  const allProtectedRoutes = [...protectedRoutes, ...apiRoutes];
-  const isProtectedRoute = allProtectedRoutes.some((route) =>
+  // const allProtectedRoutes = [...protectedRoutes, ...apiRoutes];
+  const isProtectedRoute = [...protectedRoutes, ...apiRoutes].some((route) =>
     path.startsWith(route)
   );
   const isPublicRoute = publicRoutes.includes(path);

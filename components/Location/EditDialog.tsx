@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import FormLayout from '../Shared/FormLayout'
 import EditLocation from './EditLocation'
 
-const EditDialog = ({isOpen, onClose, location}) => {
+const EditDialog = ({isOpen, onClose, location, onSubmit}) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
@@ -12,7 +12,7 @@ const EditDialog = ({isOpen, onClose, location}) => {
             <DialogDescription></DialogDescription>
           </DialogHeader>
           <FormLayout>
-            <EditLocation locationData={location} onSubmit={onClose} />
+            <EditLocation locationData={location} onSubmit={onSubmit} />
           </FormLayout>
         </DialogContent>
       </Dialog>

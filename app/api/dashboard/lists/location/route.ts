@@ -45,14 +45,14 @@ export async function GET(request) {
         },
       ],
     });
-    const total = await Item.count({ where: whereClause });
-    const pages = Math.ceil(total / query.limit);
+    // const total = await Item.count({ where: whereClause });
+    // const pages = Math.ceil(total / query.limit);
 
-    const before = query.page > 1 ? +query.page - 1 : 1;
-    const next = query.page < pages ? +query.page + 1 : pages;
+    // const before = query.page > 1 ? +query.page - 1 : 1;
+    // const next = query.page < pages ? +query.page + 1 : pages;
 
     const result = {
-      pagination: { total, pages, before, next },
+      // pagination: { total, pages, before, next },
       list: response,
     };
 

@@ -31,7 +31,13 @@ export const LoginForm = () => {
       const result = await login(loginForm);
       if(result.status === 201){
         contextLogin(result.data);
-        router.push('/dashboard');
+        sessionStorage.setItem('userFilters', JSON.stringify({
+          page: 1,
+          searchKey: '',
+          status: '',
+          userRole: '0',
+          userType: '',
+        }));
         router.push('/dashboard');
         toast({
           className: 'success_message',

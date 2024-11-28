@@ -163,6 +163,12 @@ export const ItemDataTable = () => {
   };
 
   const handleClose = () => {
+    setDialogOpen(false);
+    setDeleteDialog(false);
+    setViewDialog(false)
+  };
+
+  const handleSubmit = () => {
     fetchItemData()
     setDialogOpen(false);
     setDeleteDialog(false);
@@ -464,9 +470,9 @@ export const ItemDataTable = () => {
         </DialogContent>
       </Dialog> */}
 
-      <ViewDialog isOpen={viewDialog} onClose={handleClose} item={item}/>
-      <EditDialog isOpen={dialogOpen} onClose={handleClose} item={item}/>
-      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} item={item}/>
+      <ViewDialog isOpen={viewDialog} onClose={handleClose} item={item} />
+      <EditDialog isOpen={dialogOpen} onClose={handleClose} item={item}  onSubmit={handleSubmit}/>
+      <DeleteDialog isOpen={deleteDialog} onClose={handleClose} item={item} onSubmit={handleSubmit}/>
     </div>
   );
 };

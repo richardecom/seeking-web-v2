@@ -214,7 +214,7 @@ const ChangeEmail = () => {
             type="button"
             onClick={requestOtp}
             disabled={isActive || errors.new_email !== undefined}
-            className={`ml-2  text-white h-9 rounded-md w-[150px] px-3 py-1 text-xs font-normal ${isActive || errors.new_email? 'bg-gray-400 cursor-not-allowed':'bg-gray-900 hover:bg-gray-700 transition duration-300'}`}
+            className={`ml-2  text-white h-9 rounded-md w-[150px] px-3 py-1 text-xs font-normal ${isActive || errors.new_email? 'bg-gray-400 cursor-not-allowed':'bg-gray-900 hover:bg-gray-700 transition duration-300 active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out transition duration-300 active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out transition duration-300 active:scale-90 active:shadow-lg focus:outline-none transition transform duration-200 ease-in-out transition duration-300'}`}
           >
             {isActive ? `Please wait ${timeLeft}s` : 'Get Code'}
           </button>
