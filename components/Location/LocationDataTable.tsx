@@ -19,26 +19,13 @@ import SelectToSearch from "@/components/Shared/SelectToSearch";
 import RightActionPanel from "@/components/Shared/RightActionPanel";
 import { getDateTime } from "@/utils/DateTime";
 import { useToast } from "@/hooks/use-toast";
-// import DownloadToCsv from "@/components/Shared/DownloadToCsv";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CircleHelp } from "lucide-react";
-// import ViewLocationData from "@/components/Location/ViewLocationData";
-import FormLayout from "@/components/Shared/FormLayout";
-// import EditLocation from "@/components/Location/EditLocation";
-// import DeleteLocation from "@/components/Location/DeleteLocation";
 
 import dynamic from "next/dynamic";
-// import ViewDialog from "./ViewDialog";
-// import EditDialog from "./EditDialog";
-// import { Delete } from "./Delete";
-const ViewLocationData = dynamic(() => import("@/components/Location/ViewLocationData"));
-const EditLocation = dynamic(() => import("@/components/Location/EditLocation"));
-const DeleteLocation = dynamic(() => import("@/components/Location/DeleteLocation"));
 const DownloadToCsv = dynamic(() => import("@/components/Shared/DownloadToCsv"));
-
 const ViewDialog = dynamic(() => import("@/components/Location/ViewDialog"));
 const Delete = dynamic(() => import("@/components/Location/Delete"));
 const EditDialog = dynamic(() => import("@/components/Location/EditDialog"));
+
 const LocationDataTable = () => {
   const headers = [
     "Building",
@@ -73,7 +60,7 @@ const LocationDataTable = () => {
   ];
   const fileName = `LOCATION_DATA_${getDateTime()}.csv`;
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(2);
+  const [limit, setLimit] = useState(3);
   const [searchKey, setSearchKey] = useState("");
   const [status, setStatus] = useState("");
   const router = useRouter();
@@ -81,7 +68,7 @@ const LocationDataTable = () => {
   const [allSelected, setAllSelected] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [excludeIds, setExcludeIds] = useState([]);
   const [exportData, setExportData] = useState<Location[]>([]);
   const csvLinkRef = useRef(null);
@@ -112,7 +99,6 @@ const LocationDataTable = () => {
   };
   
   const fetchLocationData = useCallback(async () => {
-    setIsLoading(true);
     try {
       const params = { page, limit, searchKey, status };
       const result = await GetAllLocationRecords(params);
@@ -131,7 +117,17 @@ const LocationDataTable = () => {
       setIsLoading(false);
       setIsSearching(false);
     }
-  }, [page, limit, searchKey, status, router]);
+  }, [page, limit, searchKey, status, router, excludeIds]);
+
+
+  //Polling
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIsLoading(false);
+      fetchLocationData();
+    }, 3000); // 5000ms = 5 seconds
+    return () => clearInterval(intervalId);
+  }, [fetchLocationData]);
 
   const downloadCsvFile = async () => {
     if (locations.length > 0 || excludeIds.length !== pagination.total) {
@@ -418,51 +414,6 @@ const LocationDataTable = () => {
           </div>
         </>
       )}
-
-      {/* <Dialog open={viewDialog} onOpenChange={setViewDialog}>
-        <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center">
-              <DialogDescription></DialogDescription>
-              <span className="rounded-full border w-[35px] h-[35px] flex justify-center items-center bg-blue-200 ring-1 ring-inset ring-blue-600/10">
-                <CircleHelp className="text-center text-blue-500" />
-              </span>
-              <span className=" text-gray-800 p-2">View </span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-1 h-[470px] ">
-            <div className="form-body w-full h-full overflow-y-auto scrollbar px-2 py-2 border rounded-sm">
-              <ViewLocationData locationData={selected} />
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog> */}
-
-      {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Location</DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
-          <FormLayout>
-            <EditLocation locationData={selected} onSubmit={handleClose} />
-          </FormLayout>
-        </DialogContent>
-      </Dialog> */}
-
-      {/* <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
-        <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">
-          <DialogHeader>
-            <DialogTitle>Confirm</DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="h-auto form-body mb-1 w-full scrollbar px-1">
-              <DeleteLocation locationData={selected} onSubmit={handleClose} />
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog> */}
       <ViewDialog isOpen={viewDialog} onClose={handleClose} location={selected}/>
       <EditDialog isOpen={dialogOpen} onClose={handleClose} location={selected} onSubmit = {handleSubmit}/>
       <Delete isOpen={deleteDialog} onClose={handleClose} location={selected}  onSubmit = {handleSubmit}/>

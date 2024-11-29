@@ -11,10 +11,10 @@ import { DashPieChart } from "./DashPieChart";
 export default function DashboardCount() {
   const [countData, setCountData] = useState<any>({})
   const [progress, setProgress] = useState(50);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const getCategoryData = async () => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const result = await GetCounts();
       setCountData(result.data)
     } catch (err) {
@@ -24,9 +24,19 @@ export default function DashboardCount() {
       setIsLoading(false)
     }
   };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIsLoading(false);
+      getCategoryData();
+    }, 3000); // 5000ms = 3 seconds
+    return () => clearInterval(intervalId);
+  }, [getCategoryData]);
+
   useEffect(() => {
     getCategoryData();
   }, []);
+  
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-3">

@@ -80,7 +80,7 @@ export const CategoryDataTable = () => {
   });
 
   const [categories, setCategories] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [excludeIds, setExcludeIds] = useState([]);
   const [allSelected, setAllSelected] = useState(false);
   const [page, setPage] = useState(1);
@@ -198,7 +198,7 @@ export const CategoryDataTable = () => {
   }
 
   const fetchCategory = useCallback(async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const params = { page, limit, searchKey, status };
       const result = (await GetAllCategories(params)) as any;
@@ -218,7 +218,7 @@ export const CategoryDataTable = () => {
       setIsLoading(false);
       setIsSearching(false);
     }
-  }, [page, limit, searchKey, status, router]);
+  }, [page, limit, searchKey, status, router, excludeIds]);
 
   function handleSelection(list) {
     if (list.length > 0) {
@@ -271,6 +271,29 @@ export const CategoryDataTable = () => {
     const category = catType.find((cat) => cat.id === categoryId);
     return category ? category.value : "Unknown Type";
   };
+
+  useEffect(() => {
+    const fetchCategoryTypes = async () => {
+      const categories = [
+        { id: 1, value: "Food" },
+        { id: 2, value: "Gadgets" },
+        { id: 3, value: "Clothes" },
+        { id: 4, value: "Tools" },
+        { id: 5, value: "Utensils" },
+        { id: 6, value: "Hygiene" },
+      ];
+      setCatType(categories);
+    };
+    fetchCategoryTypes();
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIsLoading(false);
+      fetchCategory();
+    }, 3000); // 5000ms = 5 seconds
+    return () => clearInterval(intervalId);
+  }, [fetchCategory]);
 
   useEffect(() => {
     fetchCategory();

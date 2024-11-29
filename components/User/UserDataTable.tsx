@@ -74,7 +74,7 @@ const UserDataTable = () => {
 
 
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const [user_list, setUserList] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState({});
@@ -216,7 +216,7 @@ const UserDataTable = () => {
   };
 
   const fetchUserData = useCallback(async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const params = { page, limit, searchKey, status, userRole, userType };
       const result = (await GetAllUsers(params)) as any;
@@ -234,7 +234,7 @@ const UserDataTable = () => {
       setIsLoading(false);
       setIsSearching(false);
     }
-  }, [page, limit, searchKey, status, router, userRole, userType]);
+  }, [page, limit, searchKey, status, router, userRole, userType, excludeIds]);
 
   function handleSelection(list) {
     if (list.length > 0) {
@@ -248,6 +248,15 @@ const UserDataTable = () => {
       setUserList(list);
     }
   }
+
+  //Polling
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     setIsLoading(false);
+  //     fetchUserData();
+  //   }, 3000); // 3000 = 3 seconds
+  //   return () => clearInterval(intervalId);
+  // }, [fetchUserData]);
 
   useEffect(() => {
     if (currentUser?.role_code !== "super_admin") {

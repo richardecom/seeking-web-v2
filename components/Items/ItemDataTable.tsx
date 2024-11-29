@@ -61,7 +61,7 @@ export const ItemDataTable = () => {
   const [searchKey, setSearchKey] = useState("");
   const [status, setStatus] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   const [excludeIds, setExcludeIds] = useState([]);
   const [exportData, setExportData] = useState<Location[]>([]);
@@ -77,7 +77,7 @@ export const ItemDataTable = () => {
   });
 
   const fetchItemData = useCallback(async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const params = { page, limit, searchKey, status };
       const result = await GetAllItemRecords(params);
@@ -97,7 +97,7 @@ export const ItemDataTable = () => {
       setIsLoading(false);
       setIsSearching(false);
     }
-  }, [page, limit, searchKey, status, router]);
+  }, [page, limit, searchKey, status, router, excludeIds]);
 
   function handleSelection(list) {
     if (list.length > 0) {
@@ -140,16 +140,7 @@ export const ItemDataTable = () => {
     { key: 1, value: "Active" },
     { key: 0, value: "Archived" },
   ];
-  // const ActionButtonClicked = (location, action) => {
-  //   setSelected(location);
-  //   if (action === "edit") {
-  //     setDialogOpen(true);
-  //   } else if (action === "delete") {
-  //     setDeleteDialog(true);
-  //   } else if (action === "view") {
-  //     setViewDialog(true);
-  //   }
-  // };
+
 
   const ActionButtonClicked = (row_data, action) => {
     setItem(row_data);
@@ -260,6 +251,15 @@ export const ItemDataTable = () => {
     const allChecked = items.every((cat) => cat.selected);
     setAllSelected(allChecked);
   }, [items]);
+
+  //Polling
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIsLoading(false);
+      fetchItemData();
+    }, 3000); // 5000ms = 5 seconds
+    return () => clearInterval(intervalId);
+  }, [fetchItemData]);
 
   return (
     <div>
@@ -424,51 +424,6 @@ export const ItemDataTable = () => {
           </div>
         </>
       )}
-
-      {/* <Dialog open={viewDialog} onOpenChange={setViewDialog}>
-        <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center">
-              <DialogDescription></DialogDescription>
-              <span className="rounded-full border w-[25px] h-[25px] flex justify-center items-center bg-blue-200 ring-1 ring-inset ring-blue-600/10">
-                <CircleHelp className="text-center text-blue-500" />
-              </span>
-              <span className=" text-gray-800 p-1 ml-2 text-md">View</span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-1 h-[470px] ">
-            <div className="form-body w-full h-full overflow-y-auto scrollbar px-2 py-2 border rounded-sm">
-              <ViewItemData itemData={item} />
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog> */}
-
-      {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="md:max-w-[700px] sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Item</DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
-          <FormLayout>
-            <EditItem itemData={item} onSubmit={handleClose} />
-          </FormLayout>
-        </DialogContent>
-      </Dialog> */}
-
-      {/* <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
-        <DialogContent className="md:max-w-[500px] sm:max-w-[425px] ">
-          <DialogHeader>
-            <DialogTitle>Confirm</DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="h-auto form-body mb-1 w-full scrollbar px-1">
-              <DeleteItem itemData={item} onSubmit={handleClose} />
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog> */}
 
       <ViewDialog isOpen={viewDialog} onClose={handleClose} item={item} />
       <EditDialog isOpen={dialogOpen} onClose={handleClose} item={item}  onSubmit={handleSubmit}/>

@@ -53,8 +53,8 @@ export const UpdateItem = async (formData) => {
     return result;
 };
 
-export const ArchivedItem = async (formData) => {
-    const result = await apiRequest('item/status', 'PATCH', formData);
+export const ArchivedItem = async (item_id) => {
+    const result = await apiRequest('item/status', 'PATCH', {item_id:item_id});
     return result;
 };
 // export const UpdateItem = async (formData) => {
